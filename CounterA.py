@@ -4,6 +4,7 @@ from accoladeClass import Acco
 from accoladeClassinit import accoladecsv_init
 from matrix_diagonal import check_nxn_diags
 
+# New comment just dropped!
 
 def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriplets: list,
                          OuterTriplets: list, EyePair: list, WinningTile: list,
