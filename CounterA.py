@@ -540,8 +540,25 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
             # Ladder == 42
             add_accolade(42, rel_kan=TotalStraights)
 
+    def add_eye_to_inner() -> None:
+    # Determines if eye should be appended to innerkans
+    # Useful for the brother/sister
+        nonlocal InnerKans, EyePair, SelfDrawn
+        # Always inner if final tile is SelfDrawn
+        if SelfDrawn:
+            InnerKans.append(EyePair)
+            return
+        # Executes if the final tile is not self drawn
+        elif WinningTile[0] != EyePair[0]:
+        # Eyepair must be concealed/inside if WinningTile is not the eye
+            InnerKans.append(EyePair)
+            return
+        ... # unpack innerkan list -> count occurence of eye need to write unpack function!
+        # >= 1 --> add to innerkans
+        # == 0 DO NOT ADD TO innerkans
+
     # Calculating le accolades for same numbered triplets (off-suit)
-    doCheck_2check2 = 1  # avoid checking 2 twice
+    doCheck_2 = 1  # avoid checking 2 twice
     for j in RepeatedTriplets_CountList:
         match j:
             case 2:
@@ -549,6 +566,15 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                     doCheck_2 = 0
                     target_list = find_occurence(NumberTripletUnit, 2)
                     for i in target_list:
+                        indices = find_index_duplicate_item(i, NumberTripletUnit)
+                        # Adding the normal number triplets into func kan
+                        func_kan = []
+                        for k in indices:
+                            kan = [NumberTriplets[k]] * 3 
+                            # Returning a list of length 3
+                            func_kan.append(kan)
+                            # Adds the list to func_kan
+
                         if EyePair[0] % 10 == i:
                             # The eye pair is also the same number as the two same numbered pairs
                             # e.g. [16, 16, 16, 26, 26, 26] with eye [36, 36]
