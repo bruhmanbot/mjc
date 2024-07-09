@@ -14,6 +14,7 @@ def same_set(item1, item2):
 
 
 def set_containslists(items, set_search):
+    # Considers the things in a list 'items' and checks if all of the things are in set_search
     for thing in items:
         if not (thing in set_search):
             return False
@@ -41,8 +42,9 @@ def unique_occurence_count(list):
     return item_count
 
 
-def find_occurence(list_search, occurence):
+def find_occurence(list_search, occurence) -> list:
     # Finds the elements in a list which have appeared n amount of times
+    # and outputs them in a list
     output_list = []
     for i in list_search:
         if list_search.count(i) == occurence and not (i in output_list):

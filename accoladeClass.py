@@ -44,9 +44,6 @@ class Acco:
         # for debugging
         print(f'{self.acco_name}: {self.pts}, double on conceal: {self.double_on_conceal}')
 
-    def acc_present(self):
-        return
-
 
 if __name__ == '__main__':
     a1 = Acco("Acc1", 1, False)

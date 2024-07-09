@@ -4,7 +4,7 @@ from accoladeClass import Acco
 from accoladeClassinit import accoladecsv_init
 from matrix_diagonal import check_nxn_diags
 
-# New comment just dropped!
+# Code begins here
 
 def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriplets: list,
                          OuterTriplets: list, EyePair: list, WinningTile: list,
@@ -70,17 +70,21 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
     TotalStraights = InnerStraights + OuterStraights
 
     # Only considering unit place for TotalStriaghts --> Offsuit repeated straights accolades
-    TotalStraights_Unit = TotalStraights.copy()
-    for straightNum, straight in enumerate(TotalStraights):
-        for tilePos, tile in enumerate(straight):
-            TotalStraights_Unit[straightNum][tilePos] = tile % 10
-
-    # Get Straight Sums
+    TotalStraights_Unit = []
+    for straight in TotalStraights:
+        new_straight = []
+        for tile in straight:
+            new_straight.append(int(tile % 10))
+        TotalStraights_Unit.append(new_straight)
+        
+    OsRepeatedStraights_CountList = unique_occurence_count(TotalStraights_Unit)
+            
+    # Get Middle tile info
     StraightMiddleTile = np.array([0] * len(TotalStraights))
     for index, m in enumerate(TotalStraights):
         StraightMiddleTile[index] = int(sum(m)) / 3
     StraightSumUnit = list(StraightMiddleTile % 10)
-    OsRepeatedStraights_CountList = unique_occurence_count(StraightSumUnit)
+
 
     # Triplets
     TotalTriplets = InnerTriplets + OuterTriplets
@@ -114,10 +118,13 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
         nonlocal Accolades
         nonlocal InnerKans
         if not inverse_kan:
+            # Normal mode: checks if any 1 of the kans is NOT concealed
             result = AccoladeID[ID].evaluate_score(relevant_kans=rel_kan, outer_kans=OuterKans)
             Score += int(result[0])
             Accolades.append(f'{result[1]} - {int(result[0])}')
         else:
+            # Inverse mode: checks if there exist a version of all the kans in innerkans
+            # Should only be used for offsuit repeated straights i think
             result = AccoladeID[ID].evaluate_score_var2(relevant_kans=rel_kan, inner_kans=InnerKans)
             Score += int(result[0])
             Accolades.append(f'{result[1]} - {int(result[0])}')
@@ -127,7 +134,7 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
         nonlocal Score
         nonlocal Accolades
         nonlocal InnerKans
-        if not inverse_kan:
+        if inverse_kan:
             result = AccoladeID[ID].evaluate_score(relevant_kans=rel_kan, outer_kans=OuterKans)
             Score += int(-1 * result[0])
             Accolades.remove(f'{result[1]} - {int(result[0])}')
@@ -309,6 +316,7 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
     for i in DragonSet:
         if set_containslists(i, TotalKans):
             add_accolade(25, rel_kan=i)
+        # Smol add
         elif set_containslists([i[0], i[2]], TotalKans):
             add_accolade(26, rel_kan=[i[0], i[2]])
 
@@ -320,14 +328,6 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
 
     # Mixed Dragon (use determinant here)
     MixedDragonArray = [0] * 9
-    # for i in DragonSet:
-    #     for j in i:
-    #         if j in InnerKans:
-    #             index_change = DragonSet.index(i) * 3 + i.index(j)
-    #             MixedDragonArray[index_change] = 1
-    #
-    # MixedDragonArrayInner = np.array(MixedDragonArray)
-    # MixedDragonArrayInner = MixedDragonArrayInner.reshape((3, 3))
 
     for i in DragonSet:
         for j in i:
@@ -370,68 +370,68 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
     # Counting Off-suit Straight Repeats
     # Isolating 4 straights and 5 straights
     # Following list made to stop double counting 2 os straights
-    Checked_occurrences = []
+    doCheck_2 = True
 
     Count_SuitedStraights = 1
     for i in OsRepeatedStraights_CountList:
-        if not (i in Checked_occurrences):
-            match i:
-                case 4:
-                    OS_repeated_straight = find_occurence(TotalStraights_Unit, 4)
-                    # List should be length 1
+        match i:
+            case 4:
+                OS_repeated_straight = find_occurence(TotalStraights_Unit, 4)
+                # List should be length 1
 
-                    straight_indices = find_index_duplicate_item(OS_repeated_straight[0], TotalStraights_Unit)
-                    # List of integers
-                    # Gets indices of the repeated straights and then finds the kans and shoves it into func_kan
-                    # for further processing
-                    func_kan = []
-                    for j in straight_indices:
-                        # Utilising the fact that total straights and total straights unit does not change any indices
-                        func_kan.append(TotalStraights[j])
+                straight_indices = find_index_duplicate_item(OS_repeated_straight[0], TotalStraights_Unit)
+                # List of integers
+                # Gets indices of the repeated straights and then finds the kans and shoves it into func_kan
+                # for further processing
+                func_kan = []
+                for j in straight_indices:
+                    # Utilising the fact that total straights and total straights unit does not change any indices
+                    func_kan.append(TotalStraights[j])
 
-                    add_accolade(35, func_kan)
-                    Count_SuitedStraights = 0
-                case 5:
-                    OS_repeated_straight = find_occurence(TotalStraights_Unit, 5)
-                    # List should be length 1
+                add_accolade(35, func_kan)
+                Count_SuitedStraights = 0
+            case 5:
+                OS_repeated_straight = find_occurence(TotalStraights_Unit, 5)
+                # List should be length 1
 
-                    straight_indices = find_index_duplicate_item(OS_repeated_straight[0], TotalStraights_Unit)
-                    # List of integers
-                    # Gets indices of the repeated straights and then finds the kans and shoves it into func_kan
-                    # for further processing
-                    func_kan = []
-                    for j in straight_indices:
-                        # Utilising the fact that total straights and total straights unit does not change any indices
-                        func_kan.append(TotalStraights[j])
+                straight_indices = find_index_duplicate_item(OS_repeated_straight[0], TotalStraights_Unit)
+                # List of integers
+                # Gets indices of the repeated straights and then finds the kans and shoves it into func_kan
+                # for further processing
+                func_kan = []
+                for j in straight_indices:
+                    # Utilising the fact that total straights and total straights unit does not change any indices
+                    func_kan.append(TotalStraights[j])
 
-                    add_accolade(36, func_kan)
-                    Count_SuitedStraights = 0
-                case 3:
-                    # Only one case where occurrence = 3 (no double 3 相逢)
-                    OS_repeated_straight = find_occurence(TotalStraights_Unit, 3)
-                    # List should be length 1
+                add_accolade(36, func_kan)
+                Count_SuitedStraights = 0
+            case 3:
+                # Only one case where occurrence = 3 (no double 3 相逢)
+                OS_repeated_straight = find_occurence(TotalStraights_Unit, 3)
+                # List should be length 1
 
-                    straight_indices = find_index_duplicate_item(OS_repeated_straight[0], TotalStraights_Unit)
+                straight_indices = find_index_duplicate_item(OS_repeated_straight[0], TotalStraights_Unit)
 
-                    # List of integers
-                    # Gets indices of the repeated straights and then finds the kans and shoves it into func_kan
-                    # for further processing
-                    func_kan = []
-                    for j in straight_indices:
-                        # Utilising the fact that total straights and total straights unit does not change any indices
-                        func_kan.append(TotalStraights[j])
+                # List of integers
+                # Gets indices of the repeated straights and then finds the kans and shoves it into func_kan
+                # for further processing
+                func_kan = []
+                for j in straight_indices:
+                    # Utilising the fact that total straights and total straights unit does not change any indices
+                    func_kan.append(TotalStraights[j])
 
-                    if len(set(func_kan)) == 3:  # If all items are unique. length of the set(func_kan) == 3
-                        add_accolade(34, func_kan)
-                    # A more complicated system is needed here to avoid counting 2 suited straights + 1 off suit
-                    # straight
-                    elif len(set(func_kan)) > 1:
-                        # Only considering the two unique straights
-                        add_accolade(33, list(set(func_kan)))
-                    # The above corresponds to the case of 2 suited + 1 off suit
-                case 2:
+                if len(set(func_kan)) == 3:  # If all items are unique. length of the set(func_kan) == 3
+                    add_accolade(34, func_kan)
+                # A more complicated system is needed here to avoid counting 2 suited straights + 1 off suit
+                # straight
+                elif len(set(func_kan)) > 1:
+                    # Only considering the two unique straights
+                    add_accolade(33, list(set(func_kan)))
+                # The above corresponds to the case of 2 suited + 1 off suit
+            case 2:
+                if doCheck_2:
                     # Since there are cases that the target_list has 2 elements
-                    Checked_occurrences.append(2)
+                    doCheck_2 = False
 
                     # Only one case where occurrence = 3 (no double 3 相逢)
                     OS_repeated_straight = find_occurence(TotalStraights_Unit, 2)
@@ -447,7 +447,7 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                         for k in straight_indices:
                             # Utilising the fact that total straights and total straights unit
                             # does not change any indices
-                            func_kan.append(TotalStraights[k])
+                            func_kan.append(tuple(TotalStraights[k]))
 
                         if len(set(func_kan)) != 1:  # Off-suit case
                             # Pretty sure this is the only accolade i need to do this for
@@ -459,85 +459,94 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
         RepeatedStraights_CountList = []
 
     # Calculating le accolades for suited straights
+    doCheck_2 = True
     for j in RepeatedStraights_CountList:
         match j:
             case 2:
-                Score = Score + 5
-                Accolades.append('2 Suited Repeated Straights - 5')
+            # Two of the same straight same suit
+                if doCheck_2:
+                # Prevents double counting since there may be 2 items with value == 2 in the CountList
+                    suited_straights = find_occurence(TotalStraights, 2)
+                    # Finds the straights which have repeated twice
+                    for straight in suited_straights:
+                        # Since the straight repeating twice is already known, 
+                        # can directly add to func_kan
+                        # Also since it is repeating, one kan is enough
+                        func_kan = list(straight)
+
+                        # Check if any 1 of the straight is outside --> normal
+                        # Normal mode is sufficient
+                        add_accolade(37, func_kan)
+
+                doCheck_2 = False
             case 3:
-                Score = Score + 15
-                Accolades.append('3 Suited Repeated Straights - 15')
+                suited_straights = find_occurence(TotalStraights, 3)
+                    # Finds the straight which has repeated 3 times 
+                    # should only be 1 such straight at max (suited_straights is list of length 1)
+                add_accolade(38, suited_straights[0])
+                    # Normal type check suffices here (if none of the 3 are outside == all 3 are inside)
+
             case 4:
-                Score = Score + 30
-                Accolades.append('4 Suited Repeated Straights - 30')
+                suited_straights = find_occurence(TotalStraights, 4)
+                    # Finds the straight which has repeated 4 times 
+                    # should only be 1 such straight at max (suited_straights is list of length 1)
+                add_accolade(39, suited_straights[0])
+                    # Normal type check suffices here (if none of the 4 are outside == all 3 are inside)
 
     # Bu Bu Gao 步步高 (BBG)
     # Tricolor bu bu gao (BBG)
+    for i, straight in enumerate(TotalStraights_Unit):
+        # first straight in the sequence is straight with index i in TotalStraights and TotalStraights_Unit
+        i_nparr = np.array(straight)
 
-    for i in range(len(StraightSumUnit)):
-        firstMiddleTile = StraightMiddleTile[i]
-        MT_unit = firstMiddleTile % 10
-        # Finding potential bu bu gaos
-        straight1_index_list = find_index_duplicate_item(MT_unit + 1, StraightSumUnit)
-        straight2_index_list = find_index_duplicate_item(MT_unit + 2, StraightSumUnit)
-        # Retrieves the indices of the items with the next straight number
-        # e.g. for i = 4 from (13, 14, 15), gets i no for i = 5 (x4, x5, x6) ,
-        # and i = 6 (y5, y6, y7)
-        # lists must be non empty to continue
+        straight1_index_list = find_index_duplicate_item(list(i_nparr+1), TotalStraights_Unit)
+        # Returns the indices of the next straight e.g. [1,2,3] find indices for [2,3,4]
+        straight2_index_list = find_index_duplicate_item(list(i_nparr+2), TotalStraights_Unit)
+        # Returns the indices of the next straight e.g. [1,2,3] find indices for [3,4,5]
+
+        i_nparr = np.array(TotalStraights[i])
+        # Setting i as an np_array containing its original straight
+        # Finding the suit of i
+        i_suit = np.floor(i_nparr.mean() / 10)
+
         for q in straight1_index_list:
+            # Setting q and j to be arrays with their original straights
+            q_nparr = np.array(TotalStraights[q])
+            # Finding suit of q
+            q_suit = np.floor(q_nparr.mean() / 10)
             for j in straight2_index_list:
-                BBG_suits = [firstMiddleTile, StraightMiddleTile[q], StraightMiddleTile[j]]
-                BBG_suits = np.array(BBG_suits)
-                BBG_suits = list(np.floor(BBG_suits / 10))
+                # Iterating over all combinations of q and j (i.e. all possible combinations for BBG)
+                j_nparr = np.array(TotalStraights[j])
+                # Finding suit for j
+                j_suit = np.floor(j_nparr.mean() / 10)
 
-                BBG_suitCount = len(unique_occurence_count(BBG_suits))
-                # suit count = 3 --> Tricolor ; suitcount = 1 --> Single suit
+                suit_set = set([i_suit, q_suit, j_suit])
 
-                # Since TotalStraights = Inner + Outer and the other straight related lists
-                # are arithmetic derivatives, the inner straights tiles are still listed first
-                # if all 3 tiles are inner, then three indices should be smaller than len(InnerStriaghts) - 1
-                # All inner check
-                indices = [i, q, j]
-                AllInner = True
-                for k in indices:
-                    if k > len(InnerStraights) - 1:
-                        AllInner = False
-
-                if BBG_suitCount == 3:
-                    if AllInner:
-                        Score = Score + 10
-                        Accolades.append('Concealed Tricolor BBG - 10')
-                    else:
-                        Score = Score + 5
-                        Accolades.append('Tricolor BBG - 5')
-                elif BBG_suitCount == 1:
-                    if AllInner:
-                        Score = Score + 20
-                        Accolades.append('Concealed BBG - 20')
-                    else:
-                        Score = Score + 10
-                        Accolades.append('BBG - 10')
+                if len(suit_set) == 3: # 3 distinct suits --> Tricolor
+                    func_kan = [list(i_nparr), list(q_nparr), list(j_nparr)]
+                    add_accolade(40, func_kan, inverse_kan=True) 
+                    # Need to use inverse mode since its possible for repeated straight + BBG
+                elif len(suit_set) == 1: # 1 suit --> Single suit BBG
+                    func_kan = [list(i_nparr), list(q_nparr), list(j_nparr)]
+                    add_accolade(41, func_kan, inverse_kan=True) 
+                    # Need to use inverse mode since its possible for repeated straight + BBG
 
     # Ladder (123, 234, 456, 567, 678)
     if 'All Straights - 5' in Accolades:
         # Ladders only exist if all straights
         Straight_seq = find_arithmetic_seq(min(StraightSumUnit), StraightSumUnit, 1)
         if len(Straight_seq) == 5:
-            Accolades.remove('All Straights - 5')
-            if len(OuterStraights) == 0:
-                Score = Score + 60 - 5
-                Accolades.append('Concealed Ladder - 60')
-            else:
-                Score = Score + 30 - 5
-                Accolades.append('Ladder - 30')
+            remove_accolade(24)
+            # Ladder == 42
+            add_accolade(42, rel_kan=TotalStraights)
 
     # Calculating le accolades for same numbered triplets (off-suit)
-    check2 = 1  # avoid checking 2 twice
+    doCheck_2check2 = 1  # avoid checking 2 twice
     for j in RepeatedTriplets_CountList:
-        if check2 != 0:
-            match j:
-                case 2:
-                    check2 = 0
+        match j:
+            case 2:
+                if doCheck_2:
+                    doCheck_2 = 0
                     target_list = find_occurence(NumberTripletUnit, 2)
                     for i in target_list:
                         if EyePair[0] % 10 == i:
@@ -549,9 +558,9 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                             Score = Score + 3
                             Accolades.append('2 Brothers - 3')
 
-                case 3:
-                    Score = Score + 15
-                    Accolades.append('3 BIG Brothers - 15')
+            case 3:
+                Score = Score + 15
+                Accolades.append('3 BIG Brothers - 15')
 
     # Consecutive suited triplets
     i = 0
@@ -772,8 +781,8 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
 
 # Testing
 if __name__ == "__main__":
-    ace = std_hand_score_count([11, 12, 13, 11, 12, 13, 21, 22, 23, 31, 32, 33], [34, 35, 36],
-                               [], [], [16, 16], [36], 1,
+    ace = std_hand_score_count([11, 12, 13, 22, 23, 24, 45, 45, 45], [41,41,41, 33, 34, 35],
+                               [], [], [15, 15], [15], 1,
                                2, 3, [])
 
     print(ace[4], ace[3])
