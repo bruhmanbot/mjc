@@ -1,8 +1,9 @@
-from listUtils import *
 import numpy as np
-from accoladeClass import Acco
+
 from accoladeClassinit import accoladecsv_init
+from listUtils import *
 from matrix_diagonal import check_nxn_diags
+
 
 # Code begins here
 
@@ -76,15 +77,14 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
         for tile in straight:
             new_straight.append(int(tile % 10))
         TotalStraights_Unit.append(new_straight)
-        
+
     OsRepeatedStraights_CountList = unique_occurence_count(TotalStraights_Unit)
-            
+
     # Get Middle tile info
     StraightMiddleTile = np.array([0] * len(TotalStraights))
     for index, m in enumerate(TotalStraights):
         StraightMiddleTile[index] = int(sum(m)) / 3
     StraightSumUnit = list(StraightMiddleTile % 10)
-
 
     # Triplets
     TotalTriplets = InnerTriplets + OuterTriplets
@@ -299,8 +299,8 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
             # All straights with no lucky tiles and flowers
             add_accolade(23)
         else:
-            Score = Score + 5
-            Accolades.append("All Straights - 5")
+            # all straights
+            add_accolade(24)
 
     # Smol old and dragon
 
@@ -315,10 +315,10 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
     # Dragon
     for i in DragonSet:
         if set_containslists(i, TotalKans):
-            add_accolade(25, rel_kan=i)
+            add_accolade(25, rel_kan=i, inverse_kan=True)
         # Smol add
         elif set_containslists([i[0], i[2]], TotalKans):
-            add_accolade(26, rel_kan=[i[0], i[2]])
+            add_accolade(26, rel_kan=[i[0], i[2]], inverse_kan=True)
 
     # Smol Old (Triplet Version)
 
@@ -346,7 +346,7 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
         func_kan = []
         for kan in diag:
             func_kan.append(DragonList[kan])
-        add_accolade(27, func_kan)
+        add_accolade(27, func_kan, inverse_kan=True)
 
     # Concealed Triplets
     if len(InnerTriplets) >= 2:
@@ -418,7 +418,7 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                 func_kan = []
                 for j in straight_indices:
                     # Utilising the fact that total straights and total straights unit does not change any indices
-                    func_kan.append(TotalStraights[j])
+                    func_kan.append(tuple(TotalStraights[j]))
 
                 if len(set(func_kan)) == 3:  # If all items are unique. length of the set(func_kan) == 3
                     add_accolade(34, func_kan)
@@ -463,9 +463,9 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
     for j in RepeatedStraights_CountList:
         match j:
             case 2:
-            # Two of the same straight same suit
+                # Two of the same straight same suit
                 if doCheck_2:
-                # Prevents double counting since there may be 2 items with value == 2 in the CountList
+                    # Prevents double counting since there may be 2 items with value == 2 in the CountList
                     suited_straights = find_occurence(TotalStraights, 2)
                     # Finds the straights which have repeated twice
                     for straight in suited_straights:
@@ -481,17 +481,17 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                 doCheck_2 = False
             case 3:
                 suited_straights = find_occurence(TotalStraights, 3)
-                    # Finds the straight which has repeated 3 times 
-                    # should only be 1 such straight at max (suited_straights is list of length 1)
+                # Finds the straight which has repeated 3 times
+                # should only be 1 such straight at max (suited_straights is list of length 1)
                 add_accolade(38, suited_straights[0])
-                    # Normal type check suffices here (if none of the 3 are outside == all 3 are inside)
+                # Normal type check suffices here (if none of the 3 are outside == all 3 are inside)
 
             case 4:
                 suited_straights = find_occurence(TotalStraights, 4)
-                    # Finds the straight which has repeated 4 times 
-                    # should only be 1 such straight at max (suited_straights is list of length 1)
+                # Finds the straight which has repeated 4 times
+                # should only be 1 such straight at max (suited_straights is list of length 1)
                 add_accolade(39, suited_straights[0])
-                    # Normal type check suffices here (if none of the 4 are outside == all 3 are inside)
+                # Normal type check suffices here (if none of the 4 are outside == all 3 are inside)
 
     # Bu Bu Gao 步步高 (BBG)
     # Tricolor bu bu gao (BBG)
@@ -499,9 +499,9 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
         # first straight in the sequence is straight with index i in TotalStraights and TotalStraights_Unit
         i_nparr = np.array(straight)
 
-        straight1_index_list = find_index_duplicate_item(list(i_nparr+1), TotalStraights_Unit)
+        straight1_index_list = find_index_duplicate_item(list(i_nparr + 1), TotalStraights_Unit)
         # Returns the indices of the next straight e.g. [1,2,3] find indices for [2,3,4]
-        straight2_index_list = find_index_duplicate_item(list(i_nparr+2), TotalStraights_Unit)
+        straight2_index_list = find_index_duplicate_item(list(i_nparr + 2), TotalStraights_Unit)
         # Returns the indices of the next straight e.g. [1,2,3] find indices for [3,4,5]
 
         i_nparr = np.array(TotalStraights[i])
@@ -520,15 +520,16 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                 # Finding suit for j
                 j_suit = np.floor(j_nparr.mean() / 10)
 
-                suit_set = set([i_suit, q_suit, j_suit])
+                suit_set = {i_suit, q_suit, j_suit}
+                # Set of the three suit of the three straights
 
-                if len(suit_set) == 3: # 3 distinct suits --> Tricolor
+                if len(suit_set) == 3:  # 3 distinct suits --> Tricolor
                     func_kan = [list(i_nparr), list(q_nparr), list(j_nparr)]
-                    add_accolade(40, func_kan, inverse_kan=True) 
+                    add_accolade(40, func_kan, inverse_kan=True)
                     # Need to use inverse mode since its possible for repeated straight + BBG
-                elif len(suit_set) == 1: # 1 suit --> Single suit BBG
+                elif len(suit_set) == 1:  # 1 suit --> Single suit BBG
                     func_kan = [list(i_nparr), list(q_nparr), list(j_nparr)]
-                    add_accolade(41, func_kan, inverse_kan=True) 
+                    add_accolade(41, func_kan, inverse_kan=True)
                     # Need to use inverse mode since its possible for repeated straight + BBG
 
     # Ladder (123, 234, 456, 567, 678)
@@ -541,8 +542,9 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
             add_accolade(42, rel_kan=TotalStraights)
 
     def add_eye_to_inner() -> None:
-    # Determines if eye should be appended to innerkans
-    # Useful for the brother/sister
+        # Determines if eye should be appended to innerkans
+        # Useful for the brother/sister
+        # Make sure to delete Eyepair after use to avoid incorrect indexing for other functions
         nonlocal InnerKans, EyePair, SelfDrawn
         # Always inner if final tile is SelfDrawn
         if SelfDrawn:
@@ -550,12 +552,29 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
             return
         # Executes if the final tile is not self drawn
         elif WinningTile[0] != EyePair[0]:
-        # Eyepair must be concealed/inside if WinningTile is not the eye
+            # Eyepair must be concealed/inside if WinningTile is not the eye
             InnerKans.append(EyePair)
             return
-        ... # unpack innerkan list -> count occurence of eye need to write unpack function!
+        # unpack innerkan list -> count occurence of eye need to write unpack function!
+        WinningHandInner = unpack_list(InnerKans)
         # >= 1 --> add to innerkans
+        if WinningHandInner.count(EyePair[0]) >= 1:
+            InnerKans.append(EyePair)
+            return
         # == 0 DO NOT ADD TO innerkans
+        else:
+            return
+
+    def remove_eye_from_inner() -> None:
+        nonlocal EyePair, InnerKans
+        # Removes the eye from InnerKans (if possible) after use
+        try:
+            # Removes Eyepair from InnerKans if successful
+            InnerKans.remove(EyePair)
+        except ValueError:
+            # Nothing should occur if Eyepair is not in Innerkans to begin with
+            pass
+        return
 
     # Calculating le accolades for same numbered triplets (off-suit)
     doCheck_2 = 1  # avoid checking 2 twice
@@ -570,7 +589,7 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                         # Adding the normal number triplets into func kan
                         func_kan = []
                         for k in indices:
-                            kan = [NumberTriplets[k]] * 3 
+                            kan = [NumberTriplets[k]] * 3
                             # Returning a list of length 3
                             func_kan.append(kan)
                             # Adds the list to func_kan
@@ -578,15 +597,27 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                         if EyePair[0] % 10 == i:
                             # The eye pair is also the same number as the two same numbered pairs
                             # e.g. [16, 16, 16, 26, 26, 26] with eye [36, 36]
-                            Score = Score + 10
-                            Accolades.append('3 small Brothers - 10')
+                            func_kan.append(EyePair)
+
+                            # Add the eye pair to innerKans (if applicable) for add_accolade function
+                            add_eye_to_inner()
+                            add_accolade(44, func_kan)
+
+                            # Fixing up InnerKans list
+                            remove_eye_from_inner()
+
                         else:
-                            Score = Score + 3
-                            Accolades.append('2 Brothers - 3')
+                            # 2 bros
+                            add_accolade(43, func_kan)
 
             case 3:
-                Score = Score + 15
-                Accolades.append('3 BIG Brothers - 15')
+                # Find unit number which has appeared 3 times in triplets
+                # Should only have one such element if available
+                unit = int(find_occurence(NumberTripletUnit, 3)[0])
+                # Holy list comprehension
+                func_kan = [[10 * (suit + 1) + unit] * 3 for suit in range(3)]
+                # 3 bros
+                add_accolade(45, func_kan)
 
     # Consecutive suited triplets
     i = 0
@@ -596,36 +627,29 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
 
     while i < len(NumberTriplets):
         ConsTriplets = find_arithmetic_seq(NumberTriplets[i], NumberTriplets, 1)
-        ConsTripletsNo = len(ConsTriplets)
+        ConsTripletsNo: float = len(ConsTriplets)
         if ConsTripletsNo > 1:
+            # loading the consecutive triplets into func_kan
+            func_kan = [[repeating_tile] * 3 for repeating_tile in ConsTriplets]
+
+            # checks if the eye extends the AS
             if EyePair[0] == ConsTriplets[0] - 1 or EyePair[0] == ConsTriplets[-1] + 1:
+                # Adds the Eyepair to func_kan if needed
                 ConsTripletsNo = ConsTripletsNo + 0.5
+                func_kan.append([EyePair])
+                # Adds the eye to inner for checking
+                add_eye_to_inner()
+
+            # Linear equation to map ConsTripletsNo to ID of the accolade
+            # AccoladeID = 2*ConsTripletsNo + 42
+            sisID = int(2 * ConsTripletsNo + 42)
+
             # Giving out the accolades
-            match ConsTripletsNo:
-                case 2:
-                    Score = Score + 3
-                    Accolades.append('2 Sisters - 3')
-                case 2.5:
-                    Score = Score + 8
-                    Accolades.append('3 small Sisters - 8')
-                case 3:
-                    Score = Score + 15
-                    Accolades.append('3 BIG Sisters - 15')
-                case 3.5:
-                    Score = Score + 20
-                    Accolades.append('4 small Sisters - 20')
-                case 4:
-                    Score = Score + 40
-                    Accolades.append('4 BIG Sisters - 40')
-                case 4.5:
-                    Score = Score + 60
-                    Accolades.append('5 small Sisters - 60')
-                case 5:
-                    Score = Score + 80
-                    Accolades.append('5 BIG Sisters - 80')
-                case 6:
-                    Score = Score + 120
-                    Accolades.append('6 small Sisters - 120')
+            add_accolade(sisID, func_kan)
+
+            # Removing the eyepair from InnerKans
+            remove_eye_from_inner()
+
         # Removing the counted items from the list
         for j in ConsTriplets:
             NumberTriplets.remove(j)
@@ -634,26 +658,32 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
     # 4 in 1 / 4 in 2 / 4 in 4
 
     for q in QuadTiles:
+        func_kan = []
         KanAppearance = 0
         for i in TotalKans:  # Searches through each kan to see how kans q is contained in
             if q in i:
                 KanAppearance = KanAppearance + 1
+                # Prepping func_kan again
+                func_kan.append(i)
         # if 2 kan, that should be a triplet + a straight--> 4 in 1
         # or 2 straight + eyePair --> 4 in 2
         # 3 kan is impossible
         # 4 kan is 4 in 4
         match KanAppearance:
             case 2:
-                if q == EyePair[0]:
-                    Score = Score + 10
-                    Accolades.append('4 in 2 - 10')
-                else:
-                    Score = Score + 5
-                    Accolades.append('4 in 1 - 5')
-            case 4:
-                Score = Score + 20
-                Accolades.append('4 in 4 - 20')
+                if q == EyePair[0]:  # 4 in 2
+                    # Adding eyepair to func_kan and InnerKans
+                    func_kan.append(EyePair)
+                    add_eye_to_inner()
+                    add_accolade(55, func_kan)
+                    # Fixing up InnerKans
+                    remove_eye_from_inner()
+                else:  # 4 in 1
+                    add_accolade(54, func_kan)
+            case 4:  # 4 in 4
+                add_accolade(55, func_kan)
             case _:
+                # This part technically is not required since there shouldn't be a case where this occurs?
                 continue
 
     # 5 Suits (Large) and (Smol) and other suited things
@@ -686,17 +716,16 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
 
     # 5 Suits
     if sum(SuitsPresence) == 4.5:
-        Score = Score + 10
-        Accolades.append("Small 5 Suits - 10")
+        # Small 5 suits
+        add_accolade(57)
     elif sum(SuitsPresence) == 5:
-        Score = Score + 15
-        Accolades.append("BIG 5 Suits - 15")
+        # Big 5 suits
+        add_accolade(58)
 
     # 2 Non-Lucky Suits
     # Sum of SuitsPresence should be less than or equal to 2 and there is no contribution from lucky tiles
     if sum(SuitsPresence) <= 2 and SuitsPresence[-2:] == [0, 0]:
-        Score = Score + 5
-        Accolades.append("2 Non-Lucky Suits - 5")
+        add_accolade(59)
 
     # Mixed Flush
     # Only one in the first 3 suits should be not equal to 0 and LuckyTile count must exceed 0
@@ -705,56 +734,56 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
     # Lucky Tiles only
     if sum(SuitsPresence[0:3]) <= 1:
         if SuitsPresence[0:3] == [0, 0, 0]:
-            Score = Score + 100
-            Accolades.append("Lucky Tiles Only - 150")
+            # Lucky Tiles only
+            add_accolade(62)
         elif SuitsPresence[-2:] != [0, 0]:
-            Score = Score + 30
-            Accolades.append("Mixed Flush - 30")
+            # Mixed Flush
+            add_accolade(60)
         else:
-            Score = Score + 80
-            Accolades.append("Full Flush - 80")
+            # Full Flush
+            add_accolade(61)
 
     # All triplets
     # If there are no straights, there must only be triplets
-    if len(TotalStraights) == 0 and not ('KanKan - 120' in Accolades):
+    if len(TotalStraights) == 0 and not (f'{AccoladeID[32].acco_name} - {int(AccoladeID[32].pts)}' in Accolades):
         # No double counting if KanKan // lucky tile only
         if SuitsPresence[0:3] != [0, 0, 0]:
-            Score = Score + 30
-            Accolades.append("All triplets - 30")
+            # All triplets
+            add_accolade(63)
 
     # Dependent and Independent 全求人 半求人 門清 門清一摸七
     if len(OuterKans) == 5:
         # 5 Kans outside and winning with only 1 tile
         if SelfDrawn == 1:
             # Half Dependent?
-            Score = Score + 10
-            Accolades.append('Half from others - 10')
+            add_accolade(64)
             countsd = 0
         else:
-            Score = Score + 15
-            Accolades.append('All from others - 15')
-    elif len(OuterKans) == 0 and not ('KanKan - 120' in Accolades):
+            # All from others
+            add_accolade(65)
+    # No double counting if KanKan
+    elif len(OuterKans) == 0 and not (f'{AccoladeID[32].acco_name} - {int(AccoladeID[32].pts)}' in Accolades):
         # All kans are inside
         if SelfDrawn == 1:
-            Score = Score + 7
-            Accolades.append('Independent - 7')
+            # independence 門清一摸七
+            add_accolade(66)
             countsd = 0
         else:
-            Score = Score + 3
-            Accolades.append('Clean Doorstep - 3')
+            # Clean doorstep
+            add_accolade(67)
 
     # Yaojius
     # No Yaojiu (Tanyao)
     YaojiuPresent = 0
 
-    if SuitsPresence[-2:] == [0, 0]:
-        for i in WinningHandTotal:
-            if i % 10 == (1 or 9):
-                YaojiuPresent = 2
-                break
-        if YaojiuPresent == 0:
-            Score = Score + 5
-            Accolades.append('Tanyao - 5')
+    for i in WinningHandTotal:
+        if i % 10 == (1 or 9) or i > 40:
+            YaojiuPresent = 2
+            break
+
+    if SuitsPresence[-2:] == [0, 0] and YaojiuPresent == 0:
+        # Tanyao
+        add_accolade(68)
 
     # Mixed Yaojiu (Pure and non-Pure) + Pure Yaojiu
     # The following for loop checks if there is a 1/9 in every non-lucky tile kan
@@ -777,29 +806,35 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
     match YaojiuPresent:
         case 2:
             if SuitsPresence[-2:] == [0, 0]:
-                Score = Score + 180
-                Accolades.append('Only 1/9 - 180')
+                # Only 1/9
+                add_accolade(72)
+                # Removing All triplets
+                remove_accolade(63)
             else:
-                Score = Score + 100
-                Accolades.append('Only 1/9 with Lucky Tiles - 100')
+                # Only 1/9 With Lucky Tiles
+                add_accolade(71)
+                # Removing All triplets
+                remove_accolade(63)
         case 1:
             if SuitsPresence[-2:] == [0, 0]:
-                Score = Score + 50
-                Accolades.append('Pure Mixed 1/9 - 50')
+                # Pure Mixed 1/9
+                add_accolade(70)
             else:
-                Score = Score + 25
-                Accolades.append('Mixed 1/9 with Lucky Tiles - 25')
+                # Mixed 1/9 with Lucky Tiles
+                add_accolade(69)
 
     # Self-Drawn
     if countsd == 1 and SelfDrawn == 1:
-        Score = Score + 2
-        Accolades.append('Self Drawn - 2')
+        add_accolade(74)
     # JIHU CHIKEN CHIKEN CHIKEN
-    if Score == 6:
-        Score = 30
+    if Score == 1:
+        Score = 0
         Accolades.clear()
-        Accolades.append('Base - 5')
-        Accolades.append('Chicken - 25')
+        # chicken
+        add_accolade(73)
+
+    # Base
+    add_accolade(75)
 
     # Final output
     return InnerKans, OuterKans, EyePair, Score, Accolades
@@ -807,8 +842,8 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
 
 # Testing
 if __name__ == "__main__":
-    ace = std_hand_score_count([11, 12, 13, 22, 23, 24, 45, 45, 45], [41,41,41, 33, 34, 35],
-                               [], [], [15, 15], [15], 1,
+    ace = std_hand_score_count([11, 11, 11, 19, 19, 19], [],
+                               [44, 44, 44, 41, 41, 41], [42, 42, 42], [45, 45], [44], 1,
                                2, 3, [])
 
     print(ace[4], ace[3])

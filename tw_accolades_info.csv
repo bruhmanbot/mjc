@@ -42,24 +42,37 @@
 40,Tricolor BBG,5,1
 41,Single Suit BBG,10,1
 42,Ladder,40,1
-43,,,
-44,,,
-45,,,
-46,,,
-47,,,
-48,,,
-49,,,
-50,,,
-51,,,
-52,,,
-53,,,
-54,,,
-55,,,
-56,,,
-57,,,
-58,,,
-59,,,
-60,,,
-61,,,
-62,,,
-63,,,
+43,2 Big Brothers,3,1
+44,3 Small Brothers,10,1
+45,3 BIG Brothers,20,1
+46,2 Sisters,3,1
+47,3 Small Sisters,8,1
+48,3 BIG Sisters,15,1
+49,4 Small Sisters,25,1
+50,4 BIG Sisters,40,1
+51,5 Small Sisters,60,1
+52,5 BIG Sisters,80,1
+53,6 Small Sisters,120,1
+54,4 in 1,5,1
+55,4 in 2,20,1
+56,4 in 4,40,1
+57,Small 5 Suits,10,0
+58,Big 5 Suits,15,0
+59,2 Non-Lucky Suits,5,0
+60,Mixed Flush,30,0
+61,Full Flush,80,0
+62,Lucky Tiles Only,150,0
+63,All Triplets,30,0
+64,Half from Others,10,0
+65,All from Other,15,0
+66,Independent,7,0
+67,Clean Doorstep,3,0
+68,Tanyao,5,0
+69,Mixed 1/9 with Lucky Tiles,25,0
+70,Pure Mixed 1/9,50,0
+71,Only 1/9 with Lucky Tiles,100,0
+72,Only 1/9, 180,0
+73,Chicken,30,0
+74,Self Drawn,2,0
+75,Base,5,0
+

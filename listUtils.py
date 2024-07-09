@@ -135,3 +135,12 @@ def element_appeared_n_times_find(list2, n):
         if list2.count(i) >= n and not (i in eye):
             eye.append(i)
     return eye
+
+
+def unpack_list(list_unpack: list) -> list:
+    # Unpacks a list containing nested lists
+    # e.g. [[1,2,3] , [4,5,6]] --> [1,2,3,4,5,6]
+    output_list = []
+    for nested_list in list_unpack:
+        output_list = output_list + nested_list
+    return output_list
