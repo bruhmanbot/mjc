@@ -1,28 +1,188 @@
 <!DOCTYPE html>
+
 <head>
     <title>Testing</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=Overpass+Mono:wght@300..700&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
+
     <style>
-        body{
-            background-color: rgb(20, 22, 49);
-            padding: 20px;
+        body {
+            background-color: rgb(20, 20, 20);
+            padding-left: 10vw;
+            padding-right: 10vw;
+
         }
+
         * {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: "Titillium Web";
+            font-weight: 500;
             font-size: 125%;
-            color:antiquewhite;
+            color: rgb(213, 213, 213);
+        }
+
+        td {
+            font-size: larger;
+            padding: 1px;
+            padding-bottom: 10px;
+        }
+
+        table {
+            line-height: 50%;
+        }
+
+        .numButton {
+            font-size: smaller;
+            background-color: gray;
+            color: white;
+
+        }
+
+        .selButton {
+            font-weight: 600;
+            font-size: 35%;
+            background-color: rgb(52, 52, 52);
+            color: rgb(122, 122, 122);
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            transition: all ease-out 0.1s;
+            margin: 0px;
+            shape-margin: 10%;
+            border-radius: 20px;
+        }
+
+        .selButton:hover {
+            background-color: rgb(0, 73, 0);
+            color: white;
+        }
+
+
+        .selButton_selected {
+            font-weight: 600;
+            font-size: 37%;
+            background-color: rgb(0, 73, 0);
+            color: white;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            border-radius: 20px;
+        }
+
+        .current {
+            font-size: 16px;
+            margin: 0px;
+        }
+
+        .popButton {
+            font-size:25%;
+            background-color: rgb(51, 51, 51);
+            color: rgb(125, 125, 125);
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            transition: all linear 0.05s;
+            border-radius: 20px;
+        }
+
+        .popButton:hover {
+            background-color: rgb(71, 0, 0);
+            color: rgb(214, 214, 214);
+        }
+
+        .eva {
+            background-color: limegreen;
+            color: whitesmoke;
+            padding: 1%;
+            border-radius: 20px;
+
+        }
+
+        .tile {
+            border: 0px;
+            height: 5.65vw;
         }
     </style>
 </head>
+
 <body>
     <h1>This is a test!</h1>
-    <p>hi!<br>bye!</p>
-    <span id="suit_test">true</span>
+    <hr>
+    <table>
+
+        <tr>
+            <td colspan="2"><button onclick="selection = 1; changeSel(1)" class="selButton"
+                    id="selButton1">inner</button></td>
+            <td colspan="2"><button onclick="removeEle(1)" class="popButton">pop</button></td>
+        </tr>
+
+        <tr>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
+            <!-- <td colspan="2"><span id="inner_dest" class="current"></span></td> -->
+        </tr>
+
+        <tr>
+            <td colspan="2"><button onclick="selection = 2; changeSel(2)" class="selButton"
+                    id="selButton2">outer</button></td>
+            <td colspan="2"><button onclick="removeEle(2)" class="popButton">pop</button></td>
+        </tr>
+        <tr>
+            <td><span id="outer_dest" class="current"></span></td>
+        </tr>
+
+        <tr>
+            <td colspan="2"><button onclick="selection = 3; changeSel(3)" class="selButton"
+                    id="selButton3">winner</button></td>
+            <td colspan="2"><button onclick="removeEle(3)" class="popButton">pop</button></td>
+        </tr>
+        <tr>
+            <td><span id="winner_dest" class="current"></span></td>
+        </tr>
+    </table>
     <br>
-    <span id="suit_test2">offline</span>
+
+
+    <table>
+        <tr>
+            <td><button onclick="append(11, selection)" class="numButton">11</button></td>
+            <td><button onclick="append(12, selection)" class="numButton">12</button></td>
+            <td><button onclick="append(13, selection)" class="numButton">13</button></td>
+
+        </tr>
+        <tr>
+            <td><button onclick="append(21, selection)" class="numButton">21</button></td>
+            <td><button onclick="append(22, selection)" class="numButton">22</button></td>
+            <td><button onclick="append(23, selection)" class="numButton">23</button></td>
+        </tr>
+    </table>
     <br>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/991px-Placeholder_view_vector.svg.png" style="height:250px; margin: 200px">
+    <button class="eva">Eva</button>
     <br>
-    <script src="validityCheckJS.js" type="module"></script>
+
+    <a href="../testing.py">csv file</a>
+
+    <script src="input.js"></script>
+    <script src="counterA.js" type="module"></script>
+    <!-- <script src="acc_class.js" type="module"></script> -->
 
     <!-- <script>
     li = [[1], [9,5], [3]]

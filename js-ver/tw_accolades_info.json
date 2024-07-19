@@ -1,0 +1,458 @@
+{
+    "0": {
+        "Index": 0,
+        "acco_name": "No Flowers",
+        "points": 1,
+        "double_on_conceal": 0
+    },
+    "1": {
+        "Index": 1,
+        "acco_name": "Bad Flower",
+        "points": 1,
+        "double_on_conceal": 0
+    },
+    "2": {
+        "Index": 2,
+        "acco_name": "Good Flower",
+        "points": 2,
+        "double_on_conceal": 0
+    },
+    "3": {
+        "Index": 3,
+        "acco_name": "Set of flowers",
+        "points": 10,
+        "double_on_conceal": 0
+    },
+    "4": {
+        "Index": 4,
+        "acco_name": "All 8 Flowers",
+        "points": 30,
+        "double_on_conceal": 0
+    },
+    "5": {
+        "Index": 5,
+        "acco_name": "Wind Tiles Base",
+        "points": 1,
+        "double_on_conceal": 0
+    },
+    "6": {
+        "Index": 6,
+        "acco_name": "Wind Tiles Wind Bonus",
+        "points": 1,
+        "double_on_conceal": 0
+    },
+    "7": {
+        "Index": 7,
+        "acco_name": "Wind Tiles Seat Bonus",
+        "points": 1,
+        "double_on_conceal": 0
+    },
+    "8": {
+        "Index": 8,
+        "acco_name": "Small 3 Winds",
+        "points": 20,
+        "double_on_conceal": 0
+    },
+    "9": {
+        "Index": 9,
+        "acco_name": "Large 3 Winds",
+        "points": 30,
+        "double_on_conceal": 0
+    },
+    "10": {
+        "Index": 10,
+        "acco_name": "Small 4 Winds",
+        "points": 100,
+        "double_on_conceal": 0
+    },
+    "11": {
+        "Index": 11,
+        "acco_name": "Large 4 Winds",
+        "points": 150,
+        "double_on_conceal": 0
+    },
+    "12": {
+        "Index": 12,
+        "acco_name": "3 Minor Scholars",
+        "points": 40,
+        "double_on_conceal": 0
+    },
+    "13": {
+        "Index": 13,
+        "acco_name": "3 Major Scholars",
+        "points": 80,
+        "double_on_conceal": 0
+    },
+    "14": {
+        "Index": 14,
+        "acco_name": "Scholar Tiles",
+        "points": 2,
+        "double_on_conceal": 0
+    },
+    "15": {
+        "Index": 15,
+        "acco_name": "No Lucky Tiles and Flowers",
+        "points": 5,
+        "double_on_conceal": 0
+    },
+    "16": {
+        "Index": 16,
+        "acco_name": "No Lucky Tiles",
+        "points": 1,
+        "double_on_conceal": 0
+    },
+    "17": {
+        "Index": 17,
+        "acco_name": "Edge Tile",
+        "points": 2,
+        "double_on_conceal": 0
+    },
+    "18": {
+        "Index": 18,
+        "acco_name": "Hole Filling",
+        "points": 2,
+        "double_on_conceal": 0
+    },
+    "19": {
+        "Index": 19,
+        "acco_name": "Fake Dudu",
+        "points": 1,
+        "double_on_conceal": 0
+    },
+    "20": {
+        "Index": 20,
+        "acco_name": "Dudu",
+        "points": 2,
+        "double_on_conceal": 0
+    },
+    "21": {
+        "Index": 21,
+        "acco_name": "1 in 2",
+        "points": 1,
+        "double_on_conceal": 0
+    },
+    "22": {
+        "Index": 22,
+        "acco_name": "General's Eye",
+        "points": 2,
+        "double_on_conceal": 0
+    },
+    "23": {
+        "Index": 23,
+        "acco_name": "All Straights with No Lucky Tiles and Flowers",
+        "points": 15,
+        "double_on_conceal": 0
+    },
+    "24": {
+        "Index": 24,
+        "acco_name": "All Straights",
+        "points": 5,
+        "double_on_conceal": 0
+    },
+    "25": {
+        "Index": 25,
+        "acco_name": "Dragon",
+        "points": 10,
+        "double_on_conceal": 1
+    },
+    "26": {
+        "Index": 26,
+        "acco_name": "Elder and Son",
+        "points": 3,
+        "double_on_conceal": 1
+    },
+    "27": {
+        "Index": 27,
+        "acco_name": "Mixed Dragon",
+        "points": 5,
+        "double_on_conceal": 1
+    },
+    "28": {
+        "Index": 28,
+        "acco_name": "2 Concealed Triplets",
+        "points": 3,
+        "double_on_conceal": 0
+    },
+    "29": {
+        "Index": 29,
+        "acco_name": "3 Concealed Triplets",
+        "points": 10,
+        "double_on_conceal": 0
+    },
+    "30": {
+        "Index": 30,
+        "acco_name": "4 Concealed Triplets",
+        "points": 40,
+        "double_on_conceal": 0
+    },
+    "31": {
+        "Index": 31,
+        "acco_name": "5 Concealed Triplets",
+        "points": 100,
+        "double_on_conceal": 0
+    },
+    "32": {
+        "Index": 32,
+        "acco_name": "KanKan",
+        "points": 140,
+        "double_on_conceal": 0
+    },
+    "33": {
+        "Index": 33,
+        "acco_name": "2 Offsuit Repeated Straights",
+        "points": 3,
+        "double_on_conceal": 1
+    },
+    "34": {
+        "Index": 34,
+        "acco_name": "3 Offsuit Repeated Straights",
+        "points": 10,
+        "double_on_conceal": 1
+    },
+    "35": {
+        "Index": 35,
+        "acco_name": "4 Offsuit Repeated Straghts",
+        "points": 30,
+        "double_on_conceal": 1
+    },
+    "36": {
+        "Index": 36,
+        "acco_name": "5 Offsuit Repeated Straights",
+        "points": 60,
+        "double_on_conceal": 1
+    },
+    "37": {
+        "Index": 37,
+        "acco_name": "2 Suited Repeated Straights",
+        "points": 5,
+        "double_on_conceal": 1
+    },
+    "38": {
+        "Index": 38,
+        "acco_name": "3 Suited Repeated Straights",
+        "points": 20,
+        "double_on_conceal": 1
+    },
+    "39": {
+        "Index": 39,
+        "acco_name": "4 Suited Repeated Straights",
+        "points": 45,
+        "double_on_conceal": 1
+    },
+    "40": {
+        "Index": 40,
+        "acco_name": "Tricolor BBG",
+        "points": 5,
+        "double_on_conceal": 1
+    },
+    "41": {
+        "Index": 41,
+        "acco_name": "Single Suit BBG",
+        "points": 10,
+        "double_on_conceal": 1
+    },
+    "42": {
+        "Index": 42,
+        "acco_name": "Ladder",
+        "points": 40,
+        "double_on_conceal": 1
+    },
+    "43": {
+        "Index": 43,
+        "acco_name": "2 Big Brothers",
+        "points": 3,
+        "double_on_conceal": 1
+    },
+    "44": {
+        "Index": 44,
+        "acco_name": "3 Small Brothers",
+        "points": 10,
+        "double_on_conceal": 1
+    },
+    "45": {
+        "Index": 45,
+        "acco_name": "3 BIG Brothers",
+        "points": 20,
+        "double_on_conceal": 1
+    },
+    "46": {
+        "Index": 46,
+        "acco_name": "2 Sisters",
+        "points": 3,
+        "double_on_conceal": 1
+    },
+    "47": {
+        "Index": 47,
+        "acco_name": "3 Small Sisters",
+        "points": 8,
+        "double_on_conceal": 1
+    },
+    "48": {
+        "Index": 48,
+        "acco_name": "3 BIG Sisters",
+        "points": 15,
+        "double_on_conceal": 1
+    },
+    "49": {
+        "Index": 49,
+        "acco_name": "4 Small Sisters",
+        "points": 25,
+        "double_on_conceal": 1
+    },
+    "50": {
+        "Index": 50,
+        "acco_name": "4 BIG Sisters",
+        "points": 40,
+        "double_on_conceal": 1
+    },
+    "51": {
+        "Index": 51,
+        "acco_name": "5 Small Sisters",
+        "points": 60,
+        "double_on_conceal": 1
+    },
+    "52": {
+        "Index": 52,
+        "acco_name": "5 BIG Sisters",
+        "points": 80,
+        "double_on_conceal": 1
+    },
+    "53": {
+        "Index": 53,
+        "acco_name": "6 Small Sisters",
+        "points": 120,
+        "double_on_conceal": 1
+    },
+    "54": {
+        "Index": 54,
+        "acco_name": "4 in 1",
+        "points": 5,
+        "double_on_conceal": 1
+    },
+    "55": {
+        "Index": 55,
+        "acco_name": "4 in 2",
+        "points": 20,
+        "double_on_conceal": 1
+    },
+    "56": {
+        "Index": 56,
+        "acco_name": "4 in 4",
+        "points": 40,
+        "double_on_conceal": 1
+    },
+    "57": {
+        "Index": 57,
+        "acco_name": "Small 5 Suits",
+        "points": 10,
+        "double_on_conceal": 0
+    },
+    "58": {
+        "Index": 58,
+        "acco_name": "Big 5 Suits",
+        "points": 15,
+        "double_on_conceal": 0
+    },
+    "59": {
+        "Index": 59,
+        "acco_name": "2 Non-Lucky Suits",
+        "points": 5,
+        "double_on_conceal": 0
+    },
+    "60": {
+        "Index": 60,
+        "acco_name": "Mixed Flush",
+        "points": 30,
+        "double_on_conceal": 0
+    },
+    "61": {
+        "Index": 61,
+        "acco_name": "Full Flush",
+        "points": 80,
+        "double_on_conceal": 0
+    },
+    "62": {
+        "Index": 62,
+        "acco_name": "Lucky Tiles Only",
+        "points": 150,
+        "double_on_conceal": 0
+    },
+    "63": {
+        "Index": 63,
+        "acco_name": "All Triplets",
+        "points": 30,
+        "double_on_conceal": 0
+    },
+    "64": {
+        "Index": 64,
+        "acco_name": "Half from Others",
+        "points": 10,
+        "double_on_conceal": 0
+    },
+    "65": {
+        "Index": 65,
+        "acco_name": "All from Other",
+        "points": 15,
+        "double_on_conceal": 0
+    },
+    "66": {
+        "Index": 66,
+        "acco_name": "Independent",
+        "points": 7,
+        "double_on_conceal": 0
+    },
+    "67": {
+        "Index": 67,
+        "acco_name": "Clean Doorstep",
+        "points": 3,
+        "double_on_conceal": 0
+    },
+    "68": {
+        "Index": 68,
+        "acco_name": "Tanyao",
+        "points": 5,
+        "double_on_conceal": 0
+    },
+    "69": {
+        "Index": 69,
+        "acco_name": "Mixed 1\/9 with Lucky Tiles",
+        "points": 25,
+        "double_on_conceal": 0
+    },
+    "70": {
+        "Index": 70,
+        "acco_name": "Pure Mixed 1\/9",
+        "points": 50,
+        "double_on_conceal": 0
+    },
+    "71": {
+        "Index": 71,
+        "acco_name": "Only 1\/9 with Lucky Tiles",
+        "points": 100,
+        "double_on_conceal": 0
+    },
+    "72": {
+        "Index": 72,
+        "acco_name": "Only 1\/9",
+        "points": 180,
+        "double_on_conceal": 0
+    },
+    "73": {
+        "Index": 73,
+        "acco_name": "Chicken",
+        "points": 30,
+        "double_on_conceal": 0
+    },
+    "74": {
+        "Index": 74,
+        "acco_name": "Self Drawn",
+        "points": 2,
+        "double_on_conceal": 0
+    },
+    "75": {
+        "Index": 75,
+        "acco_name": "Base",
+        "points": 5,
+        "double_on_conceal": 0
+    }
+}

@@ -1,0 +1,9 @@
+<td><button onclick='append(11, selection)'><img src='../mahjong_tile_images/11.png' class='tile' ></td>
+<td><button onclick='append(12, selection)'><img src='../mahjong_tile_images/12.png' class='tile' ></td>
+<td><button onclick='append(13, selection)'><img src='../mahjong_tile_images/13.png' class='tile' ></td>
+<td><button onclick='append(14, selection)'><img src='../mahjong_tile_images/14.png' class='tile' ></td>
+<td><button onclick='append(15, selection)'><img src='../mahjong_tile_images/15.png' class='tile' ></td>
+<td><button onclick='append(16, selection)'><img src='../mahjong_tile_images/16.png' class='tile' ></td>
+<td><button onclick='append(17, selection)'><img src='../mahjong_tile_images/17.png' class='tile' ></td>
+<td><button onclick='append(18, selection)'><img src='../mahjong_tile_images/18.png' class='tile' ></td>
+<td><button onclick='append(19, selection)'><img src='../mahjong_tile_images/19.png' class='tile' ></td>

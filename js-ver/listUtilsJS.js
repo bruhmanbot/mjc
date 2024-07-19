@@ -43,7 +43,7 @@ export function unique_occurence_count(list){
     // returns the occurence of each item in the list inside a dictionary
     let occ_dict = {};
 
-    for (item of list){
+    for (let item of list){
         if (occ_dict[item] == undefined){
             // Initialises the count if not inside dictionary
             occ_dict[item] = 1;
@@ -77,7 +77,7 @@ export function find_index_duplicate_item(item, list_search){
     let indices_array = [];
     let begin_index = 0;
     while (true){
-        item_index = list_search.indexOf(item, begin_index)
+        const item_index = list_search.indexOf(item, begin_index);
         if (item_index == -1){
             // case for no more occurences
             return indices_array;
@@ -208,3 +208,28 @@ export function list_unpack(list){
     return unpacked;
 }
 
+
+export function matrix_diag(matrix) {
+    // calculate sum of diag of a 3*3 matrix
+    // bottom right
+    let sum_diag = 0;
+    // main diagonal
+    for (let i=0; i<3; i++){
+        let d = matrix[0][i] * matrix[1][(i+1)%3] * matrix[2][(i+2)%3]
+        if (d>=2){
+            d = Math.floor(d/2);
+        }
+        sum_diag = sum_diag + d
+    }
+
+    // upper left
+    for (let i=0; i<3; i++){
+        let d = matrix[2][i] * matrix[1][(i+1)%3] * matrix[0][(i+2)%3]
+        if (d>=2){
+            d = Math.floor(d/2);
+        }
+        sum_diag = sum_diag + d
+    }
+
+    return sum_diag
+}
