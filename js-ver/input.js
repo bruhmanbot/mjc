@@ -8,7 +8,10 @@ function append(value, select) {
             }
             else {
                 inner_arr[inner_arr.length] = value;
-                document.getElementById('inner_dest').innerHTML = inner_arr;
+                // change img
+                const id_chg = '1-' + inner_arr.length
+                const path = '../mahjong_tile_images/' + value +'.png';
+                document.getElementById(id_chg).src = path;
             }
             break
 
@@ -18,7 +21,10 @@ function append(value, select) {
             }
             else{
                 outer_arr[outer_arr.length] = value;
-                document.getElementById('outer_dest').innerHTML = outer_arr;
+                // change img
+                const id_chg = '2-' + outer_arr.length
+                const path = '../mahjong_tile_images/' + value +'.png';
+                document.getElementById(id_chg).src = path;
             }
             break
 
@@ -28,7 +34,10 @@ function append(value, select) {
             }
             else {
                 winner_arr[winner_arr.length] = value;
-            document.getElementById('winner_dest').innerHTML = winner_arr;
+                // change img
+                const id_chg = '3-1'
+                const path = '../mahjong_tile_images/' + value +'.png';
+                document.getElementById(id_chg).src = path;
             }
             break
         default:
@@ -42,17 +51,15 @@ function removeEle(arrID) {
     switch(arrID) {
         case 1:
             inner_arr.pop();
-            document.getElementById('inner_dest').innerHTML = inner_arr;
             break
         case 2:
             outer_arr.pop();
-            document.getElementById('outer_dest').innerHTML = outer_arr;
             break
         case 3:
             winner_arr.pop();
-            document.getElementById('winner_dest').innerHTML = winner_arr;
             break
     }
+    redraw()
 
 }
 
@@ -75,12 +82,56 @@ function changeSel(sel) {
     while (i <= 3);
 }
 
+function redraw() {
+    // redraws the tiles shown according to the tiles in inner_arr, outer_arr, winner_arr
+    // redraw the winning tile
+    const img_null = '../mahjong_tile_images/bull.png';
+    document.getElementById('3-1').src = img_null;
+    for (let i=1; i<=16; i++) {
+        const id_1 = '1-' + i;
+        const id_2 = '2-' + i;
+        document.getElementById(id_1).src = img_null;
+        document.getElementById(id_2).src = img_null;
+    }
+
+    // redraw inner row 
+    for (k=0; k<inner_arr.length;k++) {
+        // index k
+        const id_inner = '1-' + (k+1);
+        const path = '../mahjong_tile_images/' + inner_arr[k] + '.png';
+        document.getElementById(id_inner).src = path;
+    }
+
+    // redraw outer row
+
+    for (k=0; k<outer_arr.length;k++) {
+        // index k
+        const id_outer = '2-' + (k+1);
+        const path = '../mahjong_tile_images/' + outer_arr[k] + '.png';
+        document.getElementById(id_outer).src = path;
+    }
+
+    // redraw winning tile if applicable
+
+    if (winner_arr.length) {
+        const path = '../mahjong_tile_images/' + winner_arr[0] + '.png';
+        document.getElementById('3-1').src = path;
+    }
+
+}
+
+function debug() {
+    inner_arr = [18, 18, 19, 19, 19, 28, 28, 29, 29, 29, 37, 37, 37];
+    outer_arr = [44, 44, 44];
+    winner_arr = [28];
+    redraw();
+}
+
 let inner_arr = [];
 let outer_arr = [];
 let winner_arr = [];
 
 let selection = 1;
 
-document.getElementById().src
 
 

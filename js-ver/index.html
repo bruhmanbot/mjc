@@ -25,11 +25,17 @@
         td {
             font-size: larger;
             padding: 1px;
-            padding-bottom: 10px;
+            padding-bottom: 10px; 
         }
 
         table {
             line-height: 50%;
+        }
+
+        .sectionHeader{
+            line-height: 25%;
+            font-size: 80%;
+            font-weight: 700;
         }
 
         .numButton {
@@ -103,92 +109,221 @@
         }
 
         .tile {
-            border: 0px;
-            height: 5.65vw;
+            border: none;
+            height: 3.5vw;
         }
+
+        .tile:hover {
+            filter: brightness(1.25);
+        }
+
+        .tileButton {
+            border: none;
+            cursor: pointer;
+            appearance: none;
+            display: inline-flex;
+            margin: 0px;
+            padding: 0px;
+            background-color: inherit;
+        }
+
+        .div_lowerRegion {
+            width: 100%;
+            border: 1px solid red;
+            margin-left: auto;
+            margin-right: auto;
+            display: inline;
+            float:inline-start;
+        }
+        .div_tileEntry{
+            border: 1px solid;
+
+            padding: 10px;
+            width: auto;
+            float: left;
+        }
+
+        .div_results{
+            height:inherit tileEntry;
+            float: left;
+            margin-left: 8.5vw;
+            border: 1px rgb(162, 162, 255) solid;
+            display: inline;
+            padding: 10px;
+        }
+
+        .div_results_p{
+
+            font-size: 65%;
+            line-height: 30%;
+        }
+
+        .div_evalButton {
+            margin-top: 28%;
+            display: block;
+        }
+
+        #accolades{
+            font-size: 70%;
+            line-height: 1vw;
+        }
+
+        #score{
+            font-size: 70%;
+        }
+
+        #flowerHeader{
+            font-size: 50%;
+        }
+
+
     </style>
 </head>
 
 <body>
-    <h1>This is a test!</h1>
+    <h1 style="font-weight: 700;">This is a test!</h1>
     <hr>
-    <table>
+    <div class="div_enteredTiles">
+        <table>
 
-        <tr>
-            <td colspan="2"><button onclick="selection = 1; changeSel(1)" class="selButton"
-                    id="selButton1">inner</button></td>
-            <td colspan="2"><button onclick="removeEle(1)" class="popButton">pop</button></td>
-        </tr>
+            <tr>
+                <td colspan="2"><button onclick="selection = 1; changeSel(1)" class="selButton"
+                        id="selButton1">inner</button></td>
+                <td colspan="2"><button onclick="removeEle(1)" class="popButton">pop</button></td>
+            </tr>
+    
+            <!-- Inner row -->
+            <tr>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-1' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-2' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-3' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-4' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-5' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-6' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-7' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-8' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-9' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-10' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-11' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-12' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-13' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-14' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-15' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='1-16' ></td>
+                    
+            </tr>
+    
+            <tr>
+                <td colspan="2"><button onclick="selection = 2; changeSel(2)" class="selButton"
+                        id="selButton2">outer</button></td>
+                <td colspan="2"><button onclick="removeEle(2)" class="popButton">pop</button></td>
+            </tr>
+            <tr>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-1' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-2' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-3' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-4' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-5' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-6' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-7' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-8' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-9' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-10' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-11' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-12' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-13' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-14' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-15' ></td>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-16' ></td>
+    
+            </tr>
+    
+            <tr>
+                <td colspan="2"><button onclick="selection = 3; changeSel(3)" class="selButton" id="selButton3">winner</button></td>
+                <td colspan="6"><button onclick="removeEle(3)" class="popButton">pop</button></td>
+                <td colspan='8' id="flowerHeader">Flowers</td>
+            </tr>
+            <tr>
+                <td><img src='../mahjong_tile_images/bull.png' class='tile' id='3-1' ></td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class ='div_lowerRegion'>
+    <div class ='div_tileEntry'>
+        <h2 class='sectionHeader'>Enter tiles by clicking:</h2>
+        <table>
+            <tr>
+                <td><button class='tileButton' onclick='append(11, selection)'><img src='../mahjong_tile_images/11.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(12, selection)'><img src='../mahjong_tile_images/12.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(13, selection)'><img src='../mahjong_tile_images/13.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(14, selection)'><img src='../mahjong_tile_images/14.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(15, selection)'><img src='../mahjong_tile_images/15.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(16, selection)'><img src='../mahjong_tile_images/16.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(17, selection)'><img src='../mahjong_tile_images/17.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(18, selection)'><img src='../mahjong_tile_images/18.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(19, selection)'><img src='../mahjong_tile_images/19.png' class='tile'></button></td>
+             </tr>
+             
+             <tr>
+                <td><button class='tileButton' onclick='append(21, selection)'><img src='../mahjong_tile_images/21.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(22, selection)'><img src='../mahjong_tile_images/22.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(23, selection)'><img src='../mahjong_tile_images/23.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(24, selection)'><img src='../mahjong_tile_images/24.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(25, selection)'><img src='../mahjong_tile_images/25.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(26, selection)'><img src='../mahjong_tile_images/26.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(27, selection)'><img src='../mahjong_tile_images/27.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(28, selection)'><img src='../mahjong_tile_images/28.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(29, selection)'><img src='../mahjong_tile_images/29.png' class='tile'></button></td>
+             </tr>
+             
+             <tr>
+                <td><button class='tileButton' onclick='append(31, selection)'><img src='../mahjong_tile_images/31.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(32, selection)'><img src='../mahjong_tile_images/32.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(33, selection)'><img src='../mahjong_tile_images/33.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(34, selection)'><img src='../mahjong_tile_images/34.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(35, selection)'><img src='../mahjong_tile_images/35.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(36, selection)'><img src='../mahjong_tile_images/36.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(37, selection)'><img src='../mahjong_tile_images/37.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(38, selection)'><img src='../mahjong_tile_images/38.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(39, selection)'><img src='../mahjong_tile_images/39.png' class='tile'></button></td>
+             </tr>
+             
+             <tr>
+                <td><button class='tileButton' onclick='append(41, selection)'><img src='../mahjong_tile_images/41.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(42, selection)'><img src='../mahjong_tile_images/42.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(43, selection)'><img src='../mahjong_tile_images/43.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(44, selection)'><img src='../mahjong_tile_images/44.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(45, selection)'><img src='../mahjong_tile_images/45.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(46, selection)'><img src='../mahjong_tile_images/46.png' class='tile'></button></td>
+                <td><button class='tileButton' onclick='append(47, selection)'><img src='../mahjong_tile_images/47.png' class='tile'></button></td>
+             </tr>
+             
+             
+        </table>
+    </div>
+        <div class="div_results">
+            <h2 class="sectionHeader">Find your results here!</h2>
 
-        <tr>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <td><img src="../mahjong_tile_images/bull.png" class="tile"></td>
-            <!-- <td colspan="2"><span id="inner_dest" class="current"></span></td> -->
-        </tr>
+            <p class="div_results_p">Accolades: </p>
+            <p class="div_results_p"><span id="accolades">ppppp<br>qqqqq</span></p>
 
-        <tr>
-            <td colspan="2"><button onclick="selection = 2; changeSel(2)" class="selButton"
-                    id="selButton2">outer</button></td>
-            <td colspan="2"><button onclick="removeEle(2)" class="popButton">pop</button></td>
-        </tr>
-        <tr>
-            <td><span id="outer_dest" class="current"></span></td>
-        </tr>
+            <p class="div_results_p">Final Score: <span id="score">ppppp</span></p>
+        </div>
+    </div>
+    
 
-        <tr>
-            <td colspan="2"><button onclick="selection = 3; changeSel(3)" class="selButton"
-                    id="selButton3">winner</button></td>
-            <td colspan="2"><button onclick="removeEle(3)" class="popButton">pop</button></td>
-        </tr>
-        <tr>
-            <td><span id="winner_dest" class="current"></span></td>
-        </tr>
-    </table>
-    <br>
+    <!--Evaluate button part-->
 
+    <div class="div_evalButton">
+        <button class="eva" id="eval_button">Evaluate hand</button>
+    </div>
 
-    <table>
-        <tr>
-            <td><button onclick="append(11, selection)" class="numButton">11</button></td>
-            <td><button onclick="append(12, selection)" class="numButton">12</button></td>
-            <td><button onclick="append(13, selection)" class="numButton">13</button></td>
-
-        </tr>
-        <tr>
-            <td><button onclick="append(21, selection)" class="numButton">21</button></td>
-            <td><button onclick="append(22, selection)" class="numButton">22</button></td>
-            <td><button onclick="append(23, selection)" class="numButton">23</button></td>
-        </tr>
-    </table>
-    <br>
-    <button class="eva">Eva</button>
-    <br>
 
     <a href="../testing.py">csv file</a>
 
     <script src="input.js"></script>
-    <script src="counterA.js" type="module"></script>
-    <!-- <script src="acc_class.js" type="module"></script> -->
+    <!-- <script src="validityCheckJS.js" type="module"></script> -->
+    <script src="./eval_button.js" type="module"></script>
 
-    <!-- <script>
-    li = [[1], [9,5], [3]]
-    set = [11, 11, 11, 14, 15, 16, 17, 17, 17, 24, 24]
-    name = "test2"
-    document.getElementById("suit_test").innerHTML = list_unpack(li);
-    // document.getElementById("suit_test2").innerHTML = triplet_split(set)[1];
-    </script> -->
 </body>

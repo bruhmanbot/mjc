@@ -2,8 +2,9 @@ import * as lu from './listUtilsJS.js';
 
 import { load_acc_dict } from './acc_class.js';
 
-async function score_count_A(innerStraights, innerTriplets, outerStraights, outerTriplets, eyePair, winningTile,
+export async function score_count_A(innerStraights, innerTriplets, outerStraights, outerTriplets, eyePair, winningTile,
     sd, wind, seat, flower) {
+        console.log('score eval starting')
         const total_Tiles = innerStraights.concat(innerTriplets, outerStraights, outerTriplets, eyePair);
         const total_Tiles2 = innerStraights.concat(innerTriplets, outerStraights, outerTriplets);
         
@@ -111,7 +112,9 @@ async function score_count_A(innerStraights, innerTriplets, outerStraights, oute
             }
     
             // scholar
+            console.log(scholarCount);
             switch (scholarCount){
+            
                 case 3:
                     // 3 big scholar
                     accumulated_acc[accumulated_acc.length] = 13;
@@ -121,9 +124,13 @@ async function score_count_A(innerStraights, innerTriplets, outerStraights, oute
                     accumulated_acc[accumulated_acc.length] = 12;
                     break
                 default:
-                    // add windscore
+                    // add scholarscore
                     scholarScore = Math.floor(scholarCount) * accolade[14].pts;
-                    accumulated_acc[accumulated_acc.length] = 14;       
+                    if (scholarScore) {
+                        // only add acc if >0
+                        accumulated_acc[accumulated_acc.length] = 14;  
+                    }
+                         
             }
         }
 
@@ -309,20 +316,20 @@ async function score_count_A(innerStraights, innerTriplets, outerStraights, oute
             
             // skips to next iteration of the loop if count == 1
 
-            let rs;
+            let rs = [];
             let rs_set;
             switch (offsuit_rs_dict[s]) {
 
                 case 2:
-                    rs = lu.find_index_duplicate_item(s, totalS_u);
+                    const looping = lu.find_index_duplicate_item(Number(s), totalS_u);
                     // rs here should store 2 indices in a list ;; rs = [4, 5]
-                    for (let i = 0; i<rs.length;i++){
-                        rs[i] = totalS[i];
+                    for (let i = 0; i<looping.length;i++){
+                        rs[i] = looping[i];
                         // changing rs into the actual straights
                     }
                     rs_set = new Set(rs);
-
-                    if (rs_set.length == 2) {
+                    console.log(rs)
+                    if (rs_set.size == 2) {
                         // indicate that the 2 sets are of different suits
                         accumulated_acc[accumulated_acc.length] = 33;
                     }
@@ -708,54 +715,69 @@ async function score_count_A(innerStraights, innerTriplets, outerStraights, oute
         }
 
         if (sd) {
-            accumulated_acc[accumulated_acc.length] = 73;
+            accumulated_acc[accumulated_acc.length] = 74;
         }
 
         // counting up the final scores
         let Score = 0;
         let Acc_txt = '';
         for (const id of accumulated_acc) {
+            if (id == 5) {
+                // wind tiles
+                Score = Score + windScore;
+                Acc_txt = Acc_txt + ('Wind Tiles' + ' - ' + windScore) + '<br>';
+                continue
+            }
+            else if (id == 14){
+                // scholar tiles
+                Score = Score + scholarScore;
+                Acc_txt = Acc_txt + ('Scholar Tiles' + ' - ' + scholarScore) + '<br>';
+                continue
+            }            
             Score = Score + Number(accolade[Number(id)].pts);
-            Acc_txt = Acc_txt + accolade[id].name + '\n';
+            Acc_txt = Acc_txt + (accolade[id].name + ' - ' + accolade[id].pts) + '<br>';
             
         }
-
+        console.log(Score);
         if (Score <= 1) {
-            accumulated_acc = [73,76];
+            accumulated_acc = [73,75];
             for (id of accumulated_acc) {
                 Score = Score + Number(accolade[Number(id)].pts);
-                Acc_txt = Acc_txt + accolade[id].name + '\n';
+                Acc_txt = Acc_txt + accolade[id].name + '<br>';
             }
         }
+
         else {
             // add base
             Score = Score + Number(accolade[75].pts);
-            Acc_txt = Acc_txt + accolade[75].name;
+            Acc_txt = Acc_txt + accolade[75].name + ' - ' + accolade[75].pts;
         }
 
         return new Array(Score, Acc_txt);
+        
     }
 
-
+// console.log('sc A active')
 
     
 
-let is = [16, 17, 18, 12, 13, 14];
-let it = [35, 35, 35, 38, 38, 38];
-let eye = [21, 21];
-let ot = [23,23,23];
-let os = [];
-let wt = [14];
-let sdy = 0;
-let windx = 1;
-let seatx = 1;
-let flowerx = [];
 
-const results = await score_count_A(is, it, os, ot, eye, wt, sdy, windx, seatx, flowerx);
+// let is = [16, 17, 18, 12, 13, 14];
+// let it = [35, 35, 35, 38, 38, 38];
+// let eye = [21, 21];
+// let ot = [23,23,23];
+// let os = [];
+// let wt = [14];
+// let sdy = 0;
+// let windx = 1;
+// let seatx = 1;
+// let flowerx = [];
 
-console.log('Points = ' + results[0])
-console.log('Accolades:')
-console.log(results[1])
+// const results = await score_count_A(is, it, os, ot, eye, wt, sdy, windx, seatx, flowerx);
+
+// console.log('Points = ' + results[0])
+// console.log('Accolades:')
+// console.log(results[1])
 
 
 

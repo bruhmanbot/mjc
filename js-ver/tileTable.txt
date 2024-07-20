@@ -1,9 +1,46 @@
-<td><button onclick='append(11, selection)'><img src='../mahjong_tile_images/11.png' class='tile' ></td>
-<td><button onclick='append(12, selection)'><img src='../mahjong_tile_images/12.png' class='tile' ></td>
-<td><button onclick='append(13, selection)'><img src='../mahjong_tile_images/13.png' class='tile' ></td>
-<td><button onclick='append(14, selection)'><img src='../mahjong_tile_images/14.png' class='tile' ></td>
-<td><button onclick='append(15, selection)'><img src='../mahjong_tile_images/15.png' class='tile' ></td>
-<td><button onclick='append(16, selection)'><img src='../mahjong_tile_images/16.png' class='tile' ></td>
-<td><button onclick='append(17, selection)'><img src='../mahjong_tile_images/17.png' class='tile' ></td>
-<td><button onclick='append(18, selection)'><img src='../mahjong_tile_images/18.png' class='tile' ></td>
-<td><button onclick='append(19, selection)'><img src='../mahjong_tile_images/19.png' class='tile' ></td>
+<tr>
+   <td><button class='tileButton' onclick='append(11, selection)'><img src='../mahjong_tile_images/11.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(12, selection)'><img src='../mahjong_tile_images/12.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(13, selection)'><img src='../mahjong_tile_images/13.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(14, selection)'><img src='../mahjong_tile_images/14.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(15, selection)'><img src='../mahjong_tile_images/15.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(16, selection)'><img src='../mahjong_tile_images/16.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(17, selection)'><img src='../mahjong_tile_images/17.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(18, selection)'><img src='../mahjong_tile_images/18.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(19, selection)'><img src='../mahjong_tile_images/19.png' class='tile'></button></td>
+</tr>
+
+<tr>
+   <td><button class='tileButton' onclick='append(21, selection)'><img src='../mahjong_tile_images/21.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(22, selection)'><img src='../mahjong_tile_images/22.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(23, selection)'><img src='../mahjong_tile_images/23.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(24, selection)'><img src='../mahjong_tile_images/24.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(25, selection)'><img src='../mahjong_tile_images/25.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(26, selection)'><img src='../mahjong_tile_images/26.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(27, selection)'><img src='../mahjong_tile_images/27.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(28, selection)'><img src='../mahjong_tile_images/28.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(29, selection)'><img src='../mahjong_tile_images/29.png' class='tile'></button></td>
+</tr>
+
+<tr>
+   <td><button class='tileButton' onclick='append(31, selection)'><img src='../mahjong_tile_images/31.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(32, selection)'><img src='../mahjong_tile_images/32.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(33, selection)'><img src='../mahjong_tile_images/33.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(34, selection)'><img src='../mahjong_tile_images/34.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(35, selection)'><img src='../mahjong_tile_images/35.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(36, selection)'><img src='../mahjong_tile_images/36.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(37, selection)'><img src='../mahjong_tile_images/37.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(38, selection)'><img src='../mahjong_tile_images/38.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(39, selection)'><img src='../mahjong_tile_images/39.png' class='tile'></button></td>
+</tr>
+
+<tr>
+   <td><button class='tileButton' onclick='append(41, selection)'><img src='../mahjong_tile_images/41.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(42, selection)'><img src='../mahjong_tile_images/42.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(43, selection)'><img src='../mahjong_tile_images/43.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(44, selection)'><img src='../mahjong_tile_images/44.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(45, selection)'><img src='../mahjong_tile_images/45.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(46, selection)'><img src='../mahjong_tile_images/46.png' class='tile'></button></td>
+   <td><button class='tileButton' onclick='append(47, selection)'><img src='../mahjong_tile_images/47.png' class='tile'></button></td>
+</tr>
+

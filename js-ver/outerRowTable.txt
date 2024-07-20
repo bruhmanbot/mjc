@@ -1,0 +1,16 @@
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-1' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-2' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-3' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-4' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-5' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-6' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-7' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-8' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-9' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-10' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-11' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-12' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-13' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-14' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-15' ></td>
+<td><img src='../mahjong_tile_images/bull.png' class='tile' id='2-16' ></td>

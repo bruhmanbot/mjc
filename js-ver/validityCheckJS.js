@@ -1,6 +1,6 @@
 import * as lu from './listUtilsJS.js';
 
-function validityCheck(wh_Inner, wh_Outer, w_Tile){
+export function validityCheck(wh_Inner, wh_Outer, w_Tile){
     // step 0: check length
     const wh_Total = wh_Inner.concat(wh_Outer, w_Tile);
     let validityOutput = new Array(5);
@@ -28,15 +28,17 @@ function validityCheck(wh_Inner, wh_Outer, w_Tile){
     let insideValid = false;
 
     for (ey of potentialEyes){
-        console.log('eye:' + ey)
         let wh_Inner_working = wh_Inner.slice();
         
         wh_Inner_working = wh_Inner_working.concat(w_Tile);
+
+        wh_Inner_working.sort();
 
         // removing the 2 eyes from wh_inner
         // triplet split
         wh_Inner_working.splice(wh_Inner_working.indexOf(ey), 2);
         
+
         let result = lu.triplet_split(wh_Inner_working);
         let innerTriplets = result[0];
         let remInnerTiles = result[1];
@@ -66,7 +68,6 @@ function validityCheck(wh_Inner, wh_Outer, w_Tile){
 
     if (!insideValid) {
         // inner hand no valid combination
-        console.log('inside failed')
         return validityOutput
         // end function
     }
@@ -100,8 +101,8 @@ function validityCheck(wh_Inner, wh_Outer, w_Tile){
     return validityOutput;
 }
 
-let inner = [11, 11, 11, 12, 13, 14, 18, 18, 33, 33];
-let outer = [41, 41, 41, 26, 27, 28];
-let wt = [33];
+let inner = [18, 18, 19, 19, 19, 28, 28, 29, 29, 29, 37, 37, 37];
+let outer = [44, 44, 44];
+let wt = [28];
 
-document.getElementById("suit_test2").innerHTML = validityCheck(inner, outer, wt);
+console.log(validityCheck(inner, outer, wt));
