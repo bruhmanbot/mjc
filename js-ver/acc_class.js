@@ -27,3 +27,48 @@ export async function load_acc_dict() {
     return acc_vector
 }
 
+
+export async function sum_accolades(acc_list, fs=0, ws=0, ss=0) {
+    const accolade = await load_acc_dict();
+    // sums up all the accolades in the list
+    // adds the base in this function as well
+    let Score = 0;
+    let Acc_txt = '';
+    for (const id of acc_list) {
+        switch (id) {
+            case 1:
+                Score = Score + fs
+                Acc_txt = Acc_txt + ('Flowers' + ' - ' + fs) + '<br>';
+                continue
+            case 5:
+                Score = Score + ws;
+                Acc_txt = Acc_txt + ('Wind Tiles' + ' - ' + ws) + '<br>';
+                continue
+            case 14:
+                Score = Score + ss;
+                Acc_txt = Acc_txt + ('Scholar Tiles' + ' - ' + ss) + '<br>';
+                continue
+            default:
+                Score = Score + Number(accolade[Number(id)].pts);
+                Acc_txt = Acc_txt + (accolade[id].name + ' - ' + accolade[id].pts) + '<br>';
+                continue
+        } 
+    }
+
+    if (Score <= 1) {
+    // chicken
+        accumulated_acc = [73,75];
+        for (id of accumulated_acc) {
+            Score = Score + Number(accolade[Number(id)].pts);
+            Acc_txt = Acc_txt + accolade[id].name + '<br>';
+        }
+    }
+
+    else {
+        // add base
+        Score = Score + Number(accolade[75].pts);
+        Acc_txt = Acc_txt + accolade[75].name + ' - ' + accolade[75].pts;
+    }
+
+    return new Array(Score, Acc_txt)
+}

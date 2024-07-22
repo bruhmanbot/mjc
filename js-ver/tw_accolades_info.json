@@ -454,5 +454,41 @@
         "acco_name": "Base",
         "points": 5,
         "double_on_conceal": 0
+    },
+    "76": {
+        "Index": 76,
+        "acco_name": "16 Buddhas",
+        "points": 50,
+        "double_on_conceal": 0
+    },
+    "77": {
+        "Index": 77,
+        "acco_name": "1 in 16",
+        "points": 10,
+        "double_on_conceal": 0
+    },
+    "78": {
+        "Index": 78,
+        "acco_name": "Buddha Mixed Dragon",
+        "points": 10,
+        "double_on_conceal": 0
+    },
+    "79": {
+        "Index": 79,
+        "acco_name": "Triple Buddha",
+        "points": 10,
+        "double_on_conceal": 0
+    },
+    "80": {
+        "Index": 80,
+        "acco_name": "13 Orphans",
+        "points": 100,
+        "double_on_conceal": 0
+    },
+    "81": {
+        "Index": 81,
+        "acco_name": "1 in 13",
+        "points": 20,
+        "double_on_conceal": 0
     }
 }

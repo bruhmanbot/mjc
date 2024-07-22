@@ -1,6 +1,6 @@
 import * as lu from './listUtilsJS.js';
 
-import { load_acc_dict } from './acc_class.js';
+import  * as acc_class from './acc_class.js';
 
 export async function score_count_A(innerStraights, innerTriplets, outerStraights, outerTriplets, eyePair, winningTile,
     sd, wind, seat, flower) {
@@ -20,7 +20,7 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
         const totalT = innerT.concat(outerT);
 
         // acc dict
-        const accolade = await load_acc_dict();
+        const accolade = await acc_class.load_acc_dict();
         console.log('Loaded ' + accolade.length + ' accolades successfully!')
 
 
@@ -112,7 +112,6 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
             }
     
             // scholar
-            console.log(scholarCount);
             switch (scholarCount){
             
                 case 3:
@@ -719,41 +718,9 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
         }
 
         // counting up the final scores
-        let Score = 0;
-        let Acc_txt = '';
-        for (const id of accumulated_acc) {
-            if (id == 5) {
-                // wind tiles
-                Score = Score + windScore;
-                Acc_txt = Acc_txt + ('Wind Tiles' + ' - ' + windScore) + '<br>';
-                continue
-            }
-            else if (id == 14){
-                // scholar tiles
-                Score = Score + scholarScore;
-                Acc_txt = Acc_txt + ('Scholar Tiles' + ' - ' + scholarScore) + '<br>';
-                continue
-            }            
-            Score = Score + Number(accolade[Number(id)].pts);
-            Acc_txt = Acc_txt + (accolade[id].name + ' - ' + accolade[id].pts) + '<br>';
-            
-        }
-        console.log(Score);
-        if (Score <= 1) {
-            accumulated_acc = [73,75];
-            for (id of accumulated_acc) {
-                Score = Score + Number(accolade[Number(id)].pts);
-                Acc_txt = Acc_txt + accolade[id].name + '<br>';
-            }
-        }
+        const finalResult = await acc_class.sum_accolades(accumulated_acc, flower, windScore, scholarScore)
 
-        else {
-            // add base
-            Score = Score + Number(accolade[75].pts);
-            Acc_txt = Acc_txt + accolade[75].name + ' - ' + accolade[75].pts;
-        }
-
-        return new Array(Score, Acc_txt);
+        return finalResult;
         
     }
 
