@@ -41,13 +41,13 @@ def enter_tile(tileNo: int):
         case _:
             return
     # Path of image
-    path_cmd = f'mahjong_tile_images/{tileNo}.png'
+    path_cmd = f'./mahjong_tile_images/{tileNo}.png'
     # display image
     image_temp = Image.open(path_cmd)
     resize_img_temp = image_temp.resize((60, 72))
     image_temp = ImageTk.PhotoImage(resize_img_temp)
-    ttk.Label(frame, image=image_temp).grid(column=col, row=row)
-    ttk.Label(frame, image=image_temp).image = image_temp
+    ttk.Label(frame, image=image_temp, style='txtcol.TLabel').grid(column=col, row=row)
+    ttk.Label(frame, image=image_temp, style='txtcol.TLabel').image = image_temp
 
 
 def direction_conversion(direction):
@@ -66,7 +66,7 @@ def ResetWinningTile(RowTileCount, RowNo):
     # RowTileCount is the number of tiles in the row
     global OutsideTileCount, OutsideTileList, InsideTileList, InsideTileCount, WinningTileCount, WinningTile
     for k in range(RowTileCount):
-        ttk.Label(frame, image=bull).grid(column=k, row=RowNo)
+        ttk.Label(frame, image=bull, style='txtcol.TLabel').grid(column=k, row=RowNo)
     match RowNo:
         case 2:  # Outer Hand
             OutsideTileCount = 0
@@ -85,17 +85,17 @@ def select_flower(flowerNo):
     # Appending to the selected_flowers list
     if flowerNo in selected_flowers:
         # Change to black and white
-        path_flower = f'mahjong_tile_images/{flowerNo}_k.png'
+        path_flower = f'./mahjong_tile_images/{flowerNo}_k.png'
         selected_flowers.remove(flowerNo)
     else:
         # Change to colour
-        path_flower = f'mahjong_tile_images/{flowerNo}.png'
+        path_flower = f'./mahjong_tile_images/{flowerNo}.png'
         selected_flowers.append(flowerNo)
     # Loading the new image
     image_f = Image.open(path_flower)
     resize_f = image_f.resize((60, 72))
     image_f = ImageTk.PhotoImage(resize_f)
-    new_flower_button = ttk.Button(frame, image=image_f, command=lambda flowerNo=flowerNo: select_flower(flowerNo))
+    new_flower_button = ttk.Button(frame, image=image_f, style='button.TButton', command=lambda flowerNo=flowerNo: select_flower(flowerNo))
     new_flower_button.grid(column=flowerNo + 4, row=6)
     ttk.Button(frame, image=image_f).image = image_f
 
@@ -159,6 +159,7 @@ root = Tk()
 root.title("PC MJ COUNTER")
 root.geometry("1280x720")
 root.tk.call('tk', 'scaling', 2)
+root.configure(background='black')
 
 # Outer frame for scrolling
 outer_frame = ttk.Frame(root)
@@ -173,15 +174,26 @@ scrollbar = ttk.Scrollbar(outer_frame, orient=VERTICAL, command=frame_canvas.yvi
 scrollbar.pack(side=RIGHT, fill=Y)
 
 # configure the canvas
-frame_canvas.configure(yscrollcommand=scrollbar.set)
+frame_canvas.configure(yscrollcommand=scrollbar.set, background='black')
 frame_canvas.bind(
     '<Configure>', lambda e: frame_canvas.configure(scrollregion=frame_canvas.bbox("all"))
 )
 
+# Styling (css?!)
+sty = ttk.Style()
+sty.theme_use('alt')
+sty.configure('inner_frame.TFrame', background='black') #bg color
+sty.configure('txtcol.TLabel', background='black', foreground='white', font=('Times New Roman', 12)) # text color
+sty.configure('button.TButton', background='#181818', foreground='white', relief='ridge', font=('Times New Roman', 11), padding=2) # Buttons
+sty.map('button.TButton', background=[('active','#4594FF')])
+
+
+
 # Inner frame
-frame = ttk.Frame(frame_canvas, padding=20)
+
+frame = ttk.Frame(frame_canvas, padding=20, style='inner_frame.TFrame')
 frame.grid()
-ttk.Label(frame, text="Mahjong Score Counter", font=("", 18)).grid(row=0, columnspan=20, sticky=W)
+ttk.Label(frame, text="Mahjong Score Counter", font=('Times New Roman', 18), style='txtcol.TLabel').grid(row=0, columnspan=20, sticky=W)
 
 # Outside Tiles
 OutsideTileCount = 0
@@ -190,14 +202,14 @@ OutsideTilesTitle = Button(frame, text="Outside Tiles", fg='WHITE', bg='RED', co
 target_entry = "Outer"
 OutsideTilesTitle.grid(column=0, row=1, columnspan=2, sticky=W)
 ## Clear button
-OutsideTileReset = ttk.Button(frame, text="Reset Outer Hand", command=lambda: ResetWinningTile(16, 2))
+OutsideTileReset = ttk.Button(frame, text="Reset Outer Hand", style='button.TButton', command=lambda: ResetWinningTile(16, 2))
 OutsideTileReset.grid(column=2, row=1, columnspan=3)
 # Diplay image (Outerhand)
-bull_img = Image.open("mahjong_tile_images/bull.png")
+bull_img = Image.open("./mahjong_tile_images/bull.png")
 bull_resize = bull_img.resize((60, 72))
 bull = ImageTk.PhotoImage(bull_resize)
 for i in range(16):
-    ttk.Label(frame, image=bull).grid(column=i, row=2)
+    ttk.Label(frame, image=bull, style='txtcol.TLabel').grid(column=i, row=2)
 
 # Inner Hand
 InsideTileCount = 0
@@ -205,11 +217,11 @@ InsideTileList = []
 InsideTilesTitle = Button(frame, text="Inside Tiles", command=lambda: switch_input("Inner"))
 InsideTilesTitle.grid(column=0, row=3, columnspan=2, sticky=W)
 ## Clear button
-InsideTileReset = ttk.Button(frame, text="Reset Inner Hand", command=lambda: ResetWinningTile(16, 4))
+InsideTileReset = ttk.Button(frame, text="Reset Inner Hand", style='button.TButton', command=lambda: ResetWinningTile(16, 4))
 InsideTileReset.grid(column=2, row=3, columnspan=3)
 # Diplay image (InnerHand)
 for i in range(16):
-    ttk.Label(frame, image=bull).grid(column=i, row=4)
+    ttk.Label(frame, image=bull, style='txtcol.TLabel').grid(column=i, row=4)
 
 # Winning Tile
 WinningTileCount = 0
@@ -217,22 +229,22 @@ WinningTile = []
 WinningTileTitle = Button(frame, text="Winning Tile", command=lambda: switch_input("Winning"))
 WinningTileTitle.grid(column=0, row=5, columnspan=2, sticky=W)
 ## Clear button
-WinningTileReset = ttk.Button(frame, text="Reset Winning Tile", command=lambda: ResetWinningTile(1, 6))
+WinningTileReset = ttk.Button(frame, text="Reset Winning Tile", style='button.TButton', command=lambda: ResetWinningTile(1, 6))
 WinningTileReset.grid(column=2, row=5, columnspan=3)
 
 # Diplay image (InnerHand)
-ttk.Label(frame, image=bull).grid(column=0, columnspan=8, row=6, sticky=W)
+ttk.Label(frame, image=bull, style='txtcol.TLabel').grid(column=0, columnspan=8, row=6, sticky=W)
 
 # Flowers
-flowerTitle = ttk.Label(frame, text="Flowers")
+flowerTitle = ttk.Label(frame, text="Flowers", style='txtcol.TLabel')
 flowerTitle.grid(column=5, row=5, columnspan=10, sticky=W)
 selected_flowers = []
 for flower in range(8):
-    path = f'mahjong_tile_images/{flower + 1}_k.png'
+    path = f'./mahjong_tile_images/{flower + 1}_k.png'
     image01 = Image.open(path)
     resize_img = image01.resize((60, 72))
     imageO1 = ImageTk.PhotoImage(resize_img)
-    test1 = ttk.Button(frame, image=imageO1, command=lambda flower=flower: select_flower(flower + 1))
+    test1 = ttk.Button(frame, image=imageO1, style='button.TButton',command=lambda flower=flower: select_flower(flower + 1))
     test1.grid(column=flower + 5, row=6)
     ttk.Button(frame, image=imageO1).image = imageO1
 
@@ -242,12 +254,12 @@ for suit in range(3):
     for tileNum in range(9):
         # Path of image
         target = (suit + 1) * 10 + (tileNum + 1)
-        path = f"mahjong_tile_images/{target}.png"
+        path = f"./mahjong_tile_images/{target}.png"
         # display image
         image01 = Image.open(path)
         resize_img = image01.resize((60, 72))
         imageO1 = ImageTk.PhotoImage(resize_img)
-        test1 = ttk.Button(frame, image=imageO1, command=lambda target=target: enter_tile(target))
+        test1 = ttk.Button(frame, image=imageO1, style='button.TButton', command=lambda target=target: enter_tile(target))
         test1.grid(column=tileNum, row=(suit + 7))
         ttk.Button(frame, image=imageO1).image = imageO1
 
@@ -255,46 +267,49 @@ for suit in range(3):
 for tileNum in range(7):
     # Path of image
     target = 40 + (tileNum + 1)
-    path = f"mahjong_tile_images/{target}.png"
+    path = f"./mahjong_tile_images/{target}.png"
     # display image
     image01 = Image.open(path)
     resize_img = image01.resize((60, 72))
     imageO1 = ImageTk.PhotoImage(resize_img)
-    test1 = ttk.Button(frame, image=imageO1, command=lambda target=target: enter_tile(target))
+    test1 = ttk.Button(frame, image=imageO1, style='button.TButton', command=lambda target=target: enter_tile(target))
     test1.grid(column=tileNum, row=10)
     ttk.Button(frame, image=imageO1).image = imageO1
 
 # Wind
 WindList = ['East', 'South', 'West', "North"]
-WindTitle = ttk.Label(frame, text="Wind")
+WindTitle = ttk.Label(frame, text="Wind", style='txtcol.TLabel')
 WindTitle.grid(column=0, row=11, columnspan=2, sticky=W)
 
 WindDropdown = ttk.Combobox(frame, state="readonly", values=WindList, width=6)
 WindDropdown.grid(column=0, row=12, columnspan=2, sticky=W)
 
 # Seat
-SeatTitle = ttk.Label(frame, text="Seat")
+SeatTitle = ttk.Label(frame, text="Seat", style='txtcol.TLabel')
 SeatTitle.grid(column=2, row=11, columnspan=2, sticky=W)
 
 SeatDropdown = ttk.Combobox(frame, state="readonly", values=WindList, width=6)
 SeatDropdown.grid(column=2, row=12, columnspan=2, sticky=W)
 
 # SelfDrawn
-SelfDrawnTitle = ttk.Label(frame, text="Self Drawn")
+SelfDrawnTitle = ttk.Label(frame, text="Self Drawn", style='txtcol.TLabel')
 SelfDrawnTitle.grid(column=4, row=11, columnspan=2, sticky=W)
 
 SelfDrawnBox = ttk.Checkbutton(frame)
 SelfDrawnBox.grid(column=4, row=12, columnspan=2, sticky=W)
 
 # Evaluate button
-EvaluateButton = ttk.Button(frame, text="Evaluate Score", command=evaluate_hand)
+EvaluateButton = ttk.Button(frame, text="Evaluate Score", style='button.TButton', command=evaluate_hand)
 EvaluateButton.grid(column=6, row=12, columnspan=4, sticky=W)
 
-OutputLabel = ttk.Label(frame)
+OutputLabel = ttk.Label(frame, style='txtcol.TLabel')
 OutputLabel.grid(column=0, row=13, columnspan=1000, sticky=W)
 
-ttk.Button(frame, text="Quit", command=root.destroy).grid(column=0, row=1000, columnspan=4, sticky=W)
+ttk.Button(frame, text="Quit", style='button.TButton', command=root.destroy).grid(column=0, row=1000, columnspan=4, sticky=W)
 
 # Add inner frame to canvas
+
+
 frame_canvas.create_window((0, 0), window=frame, anchor="nw")
+
 root.mainloop()

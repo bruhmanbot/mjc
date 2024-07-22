@@ -2,8 +2,9 @@ from listUtils import *
 import numpy as np
 
 
+
 def buddha_hand_score_count(FinalHand:list, EyePair: list, WinningTile: list,
-                         SelfDrawn: int == (0 or 1), Wind: int, Seat: int, Flower:list) -> object:
+                         SelfDrawn: int, Wind: int, Seat: int, Flower:list) -> object:
     # Winning Hand outer not needed because its 16 Buddhas
     # counts the score for Buddhas and returns the accolades
     ScoreB = 55

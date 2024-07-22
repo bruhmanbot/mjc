@@ -45,8 +45,8 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
 
     # Useful Params for Pt Checking
     # Base Points + Other Params
-    Score = 5
-    Accolades = ['Base - 5']
+    Score = 0
+    Accolades = []
 
     # SelfDrawn = 0 for no, 1 for yes
     countsd = 1
@@ -842,8 +842,8 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
 
 # Testing
 if __name__ == "__main__":
-    ace = std_hand_score_count([11, 11, 11, 19, 19, 19], [],
-                               [44, 44, 44, 41, 41, 41], [42, 42, 42], [45, 45], [44], 1,
+    ace = std_hand_score_count([], [],
+                               [11, 11, 11, 19, 19, 19, 44, 44, 44, 41, 41, 41], [42, 42, 42], [45, 45], [44], 1,
                                2, 3, [])
 
     print(ace[4], ace[3])
