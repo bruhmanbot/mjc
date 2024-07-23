@@ -1,10 +1,9 @@
 import * as lu from './listUtilsJS.js';
 
-import  * as acc_class from './acc_class.js';
+import * as acc_class from './acc_class.js';
 
 export async function score_count_A(innerStraights, innerTriplets, outerStraights, outerTriplets, eyePair, winningTile,
     sd, wind, seat, flower) {
-        console.log('score eval starting')
         const total_Tiles = innerStraights.concat(innerTriplets, outerStraights, outerTriplets, eyePair);
         const total_Tiles2 = innerStraights.concat(innerTriplets, outerStraights, outerTriplets);
         
@@ -21,12 +20,16 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
 
         // acc dict
         const accolade = await acc_class.load_acc_dict();
-        console.log('Loaded ' + accolade.length + ' accolades successfully!')
-
-
 
         // store our accolades here empty list!
         let accumulated_acc = [];
+
+        // flowers
+        const fl_res = await acc_class.flower_count(seat, flower);
+        const fl_score = fl_res[0];
+        // add the flower accolades!!
+        accumulated_acc = accumulated_acc.concat(fl_res[1]);
+        
 
         // unit digis
         const totalS_u = [];
@@ -327,7 +330,6 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
                         // changing rs into the actual straights
                     }
                     rs_set = new Set(rs);
-                    console.log(rs)
                     if (rs_set.size == 2) {
                         // indicate that the 2 sets are of different suits
                         accumulated_acc[accumulated_acc.length] = 33;
@@ -718,7 +720,7 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
         }
 
         // counting up the final scores
-        const finalResult = await acc_class.sum_accolades(accumulated_acc, flower, windScore, scholarScore)
+        const finalResult = await acc_class.sum_accolades(accumulated_acc, fl_score, windScore, scholarScore)
 
         return finalResult;
         

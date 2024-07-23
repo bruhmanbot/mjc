@@ -120,6 +120,19 @@ function redraw() {
 
 }
 
+function fl_toggle(id) {
+    const img_id = 'fl_' + id;
+    if (fl.includes(id)) {
+        fl.splice(fl.indexOf(id), 1);
+        document.getElementById(img_id).className = 'tile_gray';
+        return
+    }
+    // else 
+    fl[fl.length] = id;
+    document.getElementById(img_id).className = 'tile';
+
+}
+
 function debug() {
     inner_arr = [18, 18, 19, 19, 19, 28, 28, 29, 29, 29, 37, 37, 37];
     outer_arr = [44, 44, 44];
@@ -130,6 +143,7 @@ function debug() {
 let inner_arr = [];
 let outer_arr = [];
 let winner_arr = [];
+let fl = [];
 
 let selection = 1;
 

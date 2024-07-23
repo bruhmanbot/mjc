@@ -27,6 +27,59 @@ export async function load_acc_dict() {
     return acc_vector
 }
 
+export async function flower_count(seat, flower) {
+    // make sure to load accolades before executing this function
+    const accolade = await load_acc_dict();
+    // flowers
+    let flower_working = flower.slice();
+    let fl_acc = [];
+
+    if (flower_working.length == 0) {
+        // no flowers (non-destructive to the list!!)
+        fl_acc[fl_acc.length] = 0;
+    }
+
+    // sort the flowers (destructive to the list!)
+    flower_working.sort();
+    if (flower_working.length >= 4){
+        // check for collections
+        if (flower_working.length == 8) {
+            // all 8 flowers
+            fl_acc[fl_acc.length] = 4;
+        }
+        else if (flower_working.slice(0,4).toString() == [1, 2, 3, 4]) {
+            // check first 4 flowers
+            fl_acc[fl_acc.length] = 3;
+            // delete the flowers from the below counting
+            flower_working.splice(0,4)
+        }
+        else if (flower_working.slice(fl.length-4, fl.length).toString() == [5, 6, 7, 8]) {
+            // check last 4 flowers
+            fl_acc[fl_acc.length] = 3;
+            // delete the flowers from the below counting
+            flower_working.splice(flower_working.length-4, flower_working.length)
+        }
+        
+    }
+
+    // eval for remaining flowers
+    let fl_score = 0;
+    if (flower_working.length) {
+        fl_acc[fl_acc.length] = 1;
+        // add temp bad flower accolade to the list for final text output
+    }
+    for (const fl of flower_working) {
+        if ((fl%4) == (seat%4)) {
+            fl_score = fl_score + accolade[2].pts;
+        }
+        else{
+            fl_score = fl_score + accolade[1].pts;
+        }
+    }
+
+    return new Array(fl_score, fl_acc)
+}
+
 
 export async function sum_accolades(acc_list, fs=0, ws=0, ss=0) {
     const accolade = await load_acc_dict();
@@ -49,7 +102,7 @@ export async function sum_accolades(acc_list, fs=0, ws=0, ss=0) {
                 Acc_txt = Acc_txt + ('Scholar Tiles' + ' - ' + ss) + '<br>';
                 continue
             default:
-                Score = Score + Number(accolade[Number(id)].pts);
+                Score = Score + Number(accolade[id].pts);
                 Acc_txt = Acc_txt + (accolade[id].name + ' - ' + accolade[id].pts) + '<br>';
                 continue
         } 
@@ -57,7 +110,7 @@ export async function sum_accolades(acc_list, fs=0, ws=0, ss=0) {
 
     if (Score <= 1) {
     // chicken
-        accumulated_acc = [73,75];
+        const accumulated_acc = [73,75];
         for (id of accumulated_acc) {
             Score = Score + Number(accolade[Number(id)].pts);
             Acc_txt = Acc_txt + accolade[id].name + '<br>';
