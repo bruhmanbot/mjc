@@ -1,13 +1,12 @@
 import * as lu from './listUtilsJS.js';
-import { load_acc_dict, sum_accolades } from './acc_class.js';
+import { load_acc_dict, sum_accolades, flower_count } from './acc_class.js';
 
-function buddhaCheck(wh_Inner, wh_Outer, w_Tile){
+export function buddhaCheck(wh_Inner, wh_Outer, w_Tile){
     // Does the checking thing for buddha and 13 orphans
     // returns the validity result (1/0) as well as the remaining tiles outside of the lucky tiles
     // first thing to check is outer tiles (which should not exist)
 
     if (wh_Outer.length) {
-        console.log('failed @ line 9')
         return new Array(0, [], [])
     }
 
@@ -62,7 +61,6 @@ function buddhaCheck(wh_Inner, wh_Outer, w_Tile){
     }
     else {
         // no valid case
-        console.log('failed @ line 59')
         return new Array(0, [], [])
         // end the function here
     }
@@ -71,7 +69,6 @@ function buddhaCheck(wh_Inner, wh_Outer, w_Tile){
         const wh_total_set = new Set(wh_total);
         if (wh_total_set.size != 16) {
             // should be size 16 if valid
-            console.log('failed @ line 68')
             return new Array(0, [], [])
             // end function here
         }
@@ -104,7 +101,6 @@ function buddhaCheck(wh_Inner, wh_Outer, w_Tile){
         do {
             if (isRelated(suitTiles[i])) {
                 // executes if they are related
-                console.log('failed @ line 101')
                 return new Array(0, [], [])
                 // ends the entire function here
             }
@@ -135,7 +131,6 @@ function buddhaCheck(wh_Inner, wh_Outer, w_Tile){
             return new Array(1, numTiles_set, eye)
         }
         else {
-            console.log('failed @ line 132')
             return 0, [], []
         }
     }
@@ -151,7 +146,6 @@ function buddhaCheck(wh_Inner, wh_Outer, w_Tile){
             // continue
         }
         else {
-            console.log('failed @ line 154')
             return new Array (0, [], [])
             // ends the function here
         }
@@ -174,7 +168,6 @@ function buddhaCheck(wh_Inner, wh_Outer, w_Tile){
         // check if only 1 tile should remain in remTiles
         const kan = straight.concat(triplet);
         if (remTiles.length != 1) {
-            console.log('failed @ line 176')
             return new Array (0, [], [])
         }
         // check if last tile is orphan
@@ -189,21 +182,25 @@ function buddhaCheck(wh_Inner, wh_Outer, w_Tile){
     }
 
     // failsafe if we somehow got here (we shouldn't)
-    console.log('failed @ line 191')
     return new Array(0, [], [])
 
 }
 
-async function score_count_b(numTiles, eye, wTile, sd, wind, seat, flower){
+export async function score_count_b(numTiles, eye, wTile, sd, wind, seat, flower){
     // initialise the accolade table first
     const accolade = await load_acc_dict();
 
     // preload 16 buddhas
     let acc_accolade = [76];
 
-    // add flowers!
-
-
+    // flowers
+    const fl_res = await flower_count(seat, flower);
+    const fl_score = fl_res[0];
+    // add the flower accolades!!
+    acc_accolade = acc_accolade.concat(fl_res[1]);
+    acc_accolade.sort() 
+    // put flowers in front
+    
     // check for 1 in 16 & dudu
     if (eye[0] == wTile[0]) {
         // 1 in 16
@@ -233,7 +230,8 @@ async function score_count_b(numTiles, eye, wTile, sd, wind, seat, flower){
     }
 
     // create a new dupe list for numTiles and sort it
-    let working_numTiles = numTiles.slice();
+    let working_numTiles = Array.from(numTiles);
+
     working_numTiles.sort();
     // here numTiles is a set of length (size) 9
     let working_numTilesU = [];
@@ -257,25 +255,27 @@ async function score_count_b(numTiles, eye, wTile, sd, wind, seat, flower){
             break
     }
 
-
-    // add base
-    acc_accolade[acc_accolade.length] = 75;
-
-    // counting up the final scores
-    const finalResult = sum_accolades(acc_accolade, flower, 0, 0); // 0 for wind and scholarscore
+    // counting up the final scores (and add base here)
+    const finalResult = sum_accolades(acc_accolade, fl_score, 0, 0); // 0 for wind and scholarscore
 
     return finalResult
 
 }
 
-async function score_count_13(kan, eye, w_Tile, sd, wind, seat, flower) {
+export async function score_count_13(kan, eye, w_Tile, sd, wind, seat, flower) {
     // initialise the accolade table first
     const accolade = await load_acc_dict();
 
     // preload 13 orphans
     let acc_accolade = [80];
 
-    // add flowers!
+    // flowers
+    const fl_res = await flower_count(seat, flower);
+    const fl_score = fl_res[0];
+    // add the flower accolades!!
+    acc_accolade = acc_accolade.concat(fl_res[1]);
+    acc_accolade.sort() 
+    // put flowers in front
 
 
     // need to check kan to evaluate
@@ -383,23 +383,20 @@ async function score_count_13(kan, eye, w_Tile, sd, wind, seat, flower) {
         acc_accolade[acc_accolade.length] = 74;
     }
 
-    // base
-    acc_accolade[acc_accolade.length] = 75;
-
     // calculating score and output txt
-    // counting up the final scores
-    const finalResult = sum_accolades(acc_accolade, flower, windScore, scholarScore)
+    // counting up the final scores and add base
+    const finalResult = sum_accolades(acc_accolade, fl_score, windScore, scholarScore)
 
     return finalResult
 
 }
 
-function eval_hand_b_test(){
-    const rez = buddhaCheck(inner_arr, outer_arr, winner_arr);
+// function eval_hand_b_test(){
+//     const rez = buddhaCheck(inner_arr, outer_arr, winner_arr);
 
-    console.log(rez);
+//     console.log(rez);
 
-}
+// }
 
-// binding the function to the eval_button
-document.getElementById('eval_button_b').addEventListener('click', eval_hand_b_test);
+// // binding the function to the eval_button
+// document.getElementById('eval_button_b').addEventListener('click', eval_hand_b_test);

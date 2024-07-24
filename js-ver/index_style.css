@@ -95,7 +95,28 @@ table {
     padding: 1%;
     border-radius: 20px;
     font-size: 100%;
+    display: inline-block;
+    transition: all linear 0.15s;
 
+}
+
+.eva:hover {
+    color: limegreen;
+    background-color: whitesmoke;
+}
+
+.eva_b {
+    font-size: 75%;
+    background-color: coral;
+    color: whitesmoke;
+    padding: 1%;
+    border-radius: 20px;
+    transition: all linear 0.15s;
+}
+
+.eva_b:hover {
+    color: coral;
+    background-color: whitesmoke;
 }
 
 .tile {
@@ -155,8 +176,9 @@ table {
 }
 
 .div_evalButton {
-    margin-top: 18vw;
-    display: flex;
+    margin-top: 0vw;
+    line-height: 400%;
+    display: inline;
     
 }
 

@@ -1,9 +1,10 @@
 import * as lu from './listUtilsJS.js';
 
-import * as acc_class from './acc_class.js';
+import  * as acc_class from './acc_class.js';
 
 export async function score_count_A(innerStraights, innerTriplets, outerStraights, outerTriplets, eyePair, winningTile,
     sd, wind, seat, flower) {
+
         const total_Tiles = innerStraights.concat(innerTriplets, outerStraights, outerTriplets, eyePair);
         const total_Tiles2 = innerStraights.concat(innerTriplets, outerStraights, outerTriplets);
         
@@ -29,7 +30,7 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
         const fl_score = fl_res[0];
         // add the flower accolades!!
         accumulated_acc = accumulated_acc.concat(fl_res[1]);
-        
+
 
         // unit digis
         const totalS_u = [];
@@ -726,27 +727,6 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
         
     }
 
-// console.log('sc A active')
-
-    
-
-
-// let is = [16, 17, 18, 12, 13, 14];
-// let it = [35, 35, 35, 38, 38, 38];
-// let eye = [21, 21];
-// let ot = [23,23,23];
-// let os = [];
-// let wt = [14];
-// let sdy = 0;
-// let windx = 1;
-// let seatx = 1;
-// let flowerx = [];
-
-// const results = await score_count_A(is, it, os, ot, eye, wt, sdy, windx, seatx, flowerx);
-
-// console.log('Points = ' + results[0])
-// console.log('Accolades:')
-// console.log(results[1])
 
 
 

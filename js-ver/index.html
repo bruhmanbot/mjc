@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <head>
@@ -160,11 +161,15 @@
     <!--Evaluate button part-->
     <div class="div_evalButton">
         <button class="eva" id="eval_button">Evaluate hand</button>
+        <button class="eva_b" id="eval_button_b" onclick="cls()">clear</button>
+
+        <br>
+        <button class="eva" onclick="debug()">debug(n)</button>
+        <button class="eva" onclick="debug('b')">debug(b)</button>
+        <button class="eva"  onclick="debug('t')">debug(13)</button>
+
     </div>
 
-
-
-    <button onclick="debug()">1209</button>
     <script src="input.js"></script>
     <!-- <script src="validityCheckJS.js" type="module"></script> -->
     <script src="./eval_button.js" type="module"></script>

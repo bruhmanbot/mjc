@@ -25,7 +25,7 @@ export function same_suit(item1, item2) {
 
 export function set_containslists(list, set_search){
     // considers all the items in a list and see if ALL of them are in set_search
-    for (item of list) {
+    for (const item of list) {
         if (!(set_search.includes(item))) {
             return false;
         }

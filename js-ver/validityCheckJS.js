@@ -101,8 +101,8 @@ export function validityCheck(wh_Inner, wh_Outer, w_Tile){
     return validityOutput;
 }
 
-let inner = [18, 18, 19, 19, 19, 28, 28, 29, 29, 29, 37, 37, 37];
-let outer = [44, 44, 44];
-let wt = [28];
+// let inner = [18, 18, 19, 19, 19, 28, 28, 29, 29, 29, 37, 37, 37];
+// let outer = [44, 44, 44];
+// let wt = [28];
 
-console.log(validityCheck(inner, outer, wt));
+// console.log(validityCheck(inner, outer, wt));

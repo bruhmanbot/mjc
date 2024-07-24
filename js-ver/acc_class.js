@@ -46,6 +46,8 @@ export async function flower_count(seat, flower) {
         if (flower_working.length == 8) {
             // all 8 flowers
             fl_acc[fl_acc.length] = 4;
+            flower_working = [];
+            // clear the list
         }
         else if (flower_working.slice(0,4).toString() == [1, 2, 3, 4]) {
             // check first 4 flowers
@@ -102,7 +104,7 @@ export async function sum_accolades(acc_list, fs=0, ws=0, ss=0) {
                 Acc_txt = Acc_txt + ('Scholar Tiles' + ' - ' + ss) + '<br>';
                 continue
             default:
-                Score = Score + Number(accolade[id].pts);
+                Score = Score + Number(accolade[Number(id)].pts);
                 Acc_txt = Acc_txt + (accolade[id].name + ' - ' + accolade[id].pts) + '<br>';
                 continue
         } 
@@ -110,7 +112,7 @@ export async function sum_accolades(acc_list, fs=0, ws=0, ss=0) {
 
     if (Score <= 1) {
     // chicken
-        const accumulated_acc = [73,75];
+        accumulated_acc = [73,75];
         for (id of accumulated_acc) {
             Score = Score + Number(accolade[Number(id)].pts);
             Acc_txt = Acc_txt + accolade[id].name + '<br>';

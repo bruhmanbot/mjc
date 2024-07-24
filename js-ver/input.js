@@ -120,6 +120,39 @@ function redraw() {
 
 }
 
+function debug(type=null) {
+    switch (type) {
+        
+        case 'b':
+            inner_arr = [11, 14, 17, 22, 25, 28, 33, 36, 39, 41, 42, 43, 44, 45, 46, 47];
+            outer_arr = [];
+            winner_arr = [47];
+            break
+
+        case 't':
+            inner_arr = [11, 19, 21, 29, 31, 39, 33, 34, 35, 41, 42, 43, 44, 45, 46, 47];
+            outer_arr = [];
+            winner_arr = [46];
+            break
+        default:
+            inner_arr = [18, 18, 19, 19, 19, 28, 28, 29, 29, 29, 37, 37, 37];
+            outer_arr = [44, 44, 44];
+            winner_arr = [28];
+            break
+    }
+    redraw()
+}
+
+function cls() {
+    inner_arr = [];
+    outer_arr = [];
+    winner_arr = [];
+    redraw();
+
+    document.getElementById('accolades').innerHTML = '~';
+    document.getElementById('score').innerHTML = '~';
+}
+
 function fl_toggle(id) {
     const img_id = 'fl_' + id;
     if (fl.includes(id)) {
@@ -133,12 +166,7 @@ function fl_toggle(id) {
 
 }
 
-function debug() {
-    inner_arr = [18, 18, 19, 19, 19, 28, 28, 29, 29, 29, 37, 37, 37];
-    outer_arr = [44, 44, 44];
-    winner_arr = [28];
-    redraw();
-}
+
 
 let inner_arr = [];
 let outer_arr = [];
