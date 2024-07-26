@@ -6,6 +6,7 @@
 
 <h3>Python version</h3>
 <p>The main file you will be using is userGUI.py execute the file and you should find a pretty intuitive UI to enter your tiles in. Due to the limitations with tkinter, you may need to resize your window so the scrolling function can keep up with the new page size.</p>
+<p>Make sure to run the python file in the current working directory ./mjc-main or else the file paths for the images may fail. To ensure doing so, simply run the file by executing counter.bat instead.</p>
 <p>Another file you may want to edit is tw_accolades_info.csv you can change then score of each accolade on that.</p>
 
 <h3>js version</h3>

@@ -1,5 +1,5 @@
 import numpy as np
-
+from flower import flower_count
 from accoladeClassinit import accoladecsv_init
 from listUtils import *
 from matrix_diagonal import check_nxn_diags
@@ -9,7 +9,7 @@ from matrix_diagonal import check_nxn_diags
 
 def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriplets: list,
                          OuterTriplets: list, EyePair: list, WinningTile: list,
-                         SelfDrawn: int, Wind: int, Seat: int, Flower: list) -> object:
+                         SelfDrawn: int, Wind: int, Seat: int, Flower: list, AccoladeID=accoladecsv_init()) -> object:
     # Standard hand point checking
     # Splitting into different Kans
     OuterKans = split_list(OuterStraights + OuterTriplets, 3)
@@ -109,7 +109,7 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
     # YaojiuPresent = 0
 
     # Initialise scoring table
-    AccoladeID = accoladecsv_init()
+    # AccoladeID = accoladecsv_init()
 
     # Function used to add accolades
     # Updates score and accolade list accordingly
@@ -145,33 +145,12 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
         return
 
     # Flowers
-    if len(Flower) == 0:
-        # No flower case
-        add_accolade(ID=0)
-    else:
-        # If there are flowers
-        for i in Flower:
-            if i % 4 == Seat % 4:
-                FlowerScore = FlowerScore + AccoladeID[2].pts  # Matching flowers
-            else:
-                FlowerScore = FlowerScore + AccoladeID[1].pts  # Non-Matching flowers
+        # Flowers
+    flowerRes = flower_count(Flower, Seat, AccoladeID)
 
-        # Amount of points a set of flowers would normally get when counted seperately
-        set_deduction = 3 * AccoladeID[1].pts + AccoladeID[2].pts
-
-        if set_containslists([1, 2, 3, 4], Flower):  # One whole collection
-            FlowerScore = FlowerScore - set_deduction + AccoladeID[3].pts
-            # One set of flowers = 10 pts (but not counting individual pts)
-
-        if set_containslists([5, 6, 7, 8], Flower):  # One whole collection
-            FlowerScore = FlowerScore - set_deduction + AccoladeID[3].pts
-            # One set of flowers = 10 pts (but not counting individual pts)
-            if set_containslists([k + 1 for k in range(8)], Flower):  # All 8 flowers
-                FlowerScore = AccoladeID[4].pts
-
-        # Adding the final scores
-        Score = Score + FlowerScore
-        Accolades.append(f'Flowers - {FlowerScore}')
+    # Adding the final scores & accolades from flowers
+    Score = Score + flowerRes[0]
+    Accolades.append(flowerRes[1])
 
     # Number of Wind Tiles
     if 80 < sum(EyePair) < 89:
@@ -533,8 +512,8 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                     # Need to use inverse mode since its possible for repeated straight + BBG
 
     # Ladder (123, 234, 456, 567, 678)
-    if 'All Straights - 5' in Accolades:
-        # Ladders only exist if all straights
+    if len(TotalTriplets) == 0:
+        # Ladders only exist if all straights i.e. no triplets!
         Straight_seq = find_arithmetic_seq(min(StraightSumUnit), StraightSumUnit, 1)
         if len(Straight_seq) == 5:
             remove_accolade(24)
@@ -724,7 +703,7 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
 
     # 2 Non-Lucky Suits
     # Sum of SuitsPresence should be less than or equal to 2 and there is no contribution from lucky tiles
-    if sum(SuitsPresence) <= 2 and SuitsPresence[-2:] == [0, 0]:
+    if (1 < sum(SuitsPresence) <= 2) and SuitsPresence[-2:] == [0, 0]:
         add_accolade(59)
 
     # Mixed Flush

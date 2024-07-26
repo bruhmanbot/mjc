@@ -1,51 +1,41 @@
 from listUtils import *
 import numpy as np
-
+from accoladeClassinit import accoladecsv_init
+from flower import flower_count
 
 def ligu_score_count(WinningHandInner:list , WinningTile: list,
-                     self_drawn: int, wind: int, seat: int, Flower:list):
+                     self_drawn: int, wind: int, seat: int, Flower:list, AccoladeID=accoladecsv_init()):
     # Winning Hand outer not needed because its ligu
     # counts the score for ligu ligu and returns the accolades
-    ScoreL = 5
-    AccoladesL = ['Base - 5']
+    ScoreL = 0
+    AccoladesL = []
+
+    def add_accolade(ID: int) -> None:
+        nonlocal ScoreL
+        nonlocal AccoladesL
+        # Normal mode: checks if any 1 of the kans is NOT concealed
+        result = AccoladeID[ID].evaluate_score()
+        ScoreL += int(result[0])
+        AccoladesL.append(f'{result[1]} - {int(result[0])}')
+        return
+    
+    # LIGU Accolade
+    add_accolade(82)
 
     # Flowers
-    FlowerScore = 0
-    if len(Flower) == 0:
-        # No flower case
-        FlowerScore = 1
-        AccoladesL.append('No Flowers - 1')
-        ScoreL = ScoreL + FlowerScore
-    else:
-        # If there are flowers
-        for i in Flower:
-            if i % 4 == seat % 4:
-                FlowerScore = FlowerScore + 2  # Matching flowers
-            else:
-                FlowerScore = FlowerScore + 1  # Non-Matching flowers
+    flowerRes = flower_count(Flower, seat, AccoladeID)
 
-        if set_containslists([1, 2, 3, 4], Flower):  # One whole collection
-            FlowerScore = FlowerScore - 5 + 10  # One set of flowers = 10 pts (but not counting individual pts)
-
-        if set_containslists([5, 6, 7, 8], Flower):  # One whole collection
-            FlowerScore = FlowerScore - 5 + 10  # One set of flowers = 10 pts (but not counting individual pts)
-            if set_containslists([k + 1 for k in range(8)], Flower):  # All 8 flowers
-                FlowerScore = 30
-
-        # Adding the final scores
-        ScoreL = ScoreL + FlowerScore
-        AccoladesL.append(f'Flowers - {FlowerScore}')
+    # Adding the final scores
+    ScoreL = ScoreL + flowerRes[0]
+    AccoladesL.append(flowerRes[1])
 
     # See if the final tile is dudu or 1 in 8
     if WinningHandInner.count(WinningTile[0]) == 1:
         # 1 corresponds to the case of du du
-        ScoreL = ScoreL + 42
-        AccoladesL.append('LiguLigu - 40')
-        AccoladesL.append('Dudu - 2')
+        add_accolade(20)
     else:
-        # the count should either be 1 or 2
-        ScoreL = ScoreL + 50
-        AccoladesL.append('1 in 8 LiguLigu - 50')
+        # 1 in 8 case (i.e. count == 2)
+        add_accolade(83)
 
     # find pairs and triplets for score counting
     WinningHandTotal = WinningHandInner + WinningTile
@@ -62,15 +52,15 @@ def ligu_score_count(WinningHandInner:list , WinningTile: list,
 
     if triplet[0] > 40:
         if 40 < triplet[0] < 45: # Wind Tiles
-            LTScore = LTScore + 1
+            LTScore = AccoladeID[5].pts
             if triplet[0] == 40 + wind:
                 # Matching wind
-                LTScore = LTScore + 1
+                LTScore = LTScore + AccoladeID[6].pts
             if triplet[0] == 40 + seat:
                 # Matching seat
-                LTScore = LTScore + 1
+                LTScore = LTScore + AccoladeID[7].pts
         else: # ScholarTiles
-            LTScore = LTScore + 2
+            LTScore = AccoladeID[14].pts
 
         ScoreL = ScoreL + LTScore
         AccoladesL.append(f'Lucky Tiles - {LTScore}')
@@ -82,8 +72,7 @@ def ligu_score_count(WinningHandInner:list , WinningTile: list,
         LTPresent = 1
 
     if LTPresent == 0:
-        ScoreL = ScoreL + 1
-        AccoladesL.append('No Lucky Tiles - 1')
+        add_accolade(0)
 
     # Consec pairs?
     unique_num_tiles = []
@@ -111,43 +100,14 @@ def ligu_score_count(WinningHandInner:list , WinningTile: list,
     # e.g. Aseq = [1, 1, 3, 1, 2]
 
     for i in consec_strings:
-        match i:
-            case 3:
-                ScoreL = ScoreL + 3
-                AccoladesL.append('3 Consecutive Pairs - 5')
-
-            case 4:
-                ScoreL = ScoreL + 8
-                AccoladesL.append('4 Consecutive Pairs - 10')
-
-            case 5:
-                ScoreL = ScoreL + 20
-                AccoladesL.append('5 Consecutive Pairs - 20')
-
-            case 6:
-                ScoreL = ScoreL + 40
-                AccoladesL.append('6 Consecutive Pairs - 40')
-
-            case 7:
-                ScoreL = ScoreL + 80
-                AccoladesL.append('7 Consecutive Pairs - 80')
-
-            case 8:
-                ScoreL = ScoreL + 240
-                AccoladesL.append('Super Dragon - 240')
+        # accolade id = 81+i e.g. if i = 5, accolade id -> 86
+        add_accolade(int(81+i))
 
     unique_unit_tiles = np.array(unique_num_tiles2) % 10
     unique_units = list(unique_unit_tiles)
     unique_units.sort()
 
-    # ASeq can only be found if there are non lucky tiles
-    if len(unique_num_tiles2) > 0:
-        Aseq = find_arithmetic_seq(unique_units[0], unique_units, 1)
 
-        # Super mixed dragon
-        if len(Aseq) == 8 and not('Super Dragon - 240' in AccoladesL):
-            ScoreL = ScoreL + 80
-            AccoladesL.append('Super Mixed Dragon - 80')
 
     # Suits
     SuitsPresence = [0, 0, 0]
@@ -156,26 +116,32 @@ def ligu_score_count(WinningHandInner:list , WinningTile: list,
         if j < 40:
             suit_index = int(j/10) - 1
             SuitsPresence[suit_index] = 1
+
+    # ASeq can only be found if there are non lucky tiles
+    if len(unique_num_tiles2) > 0:
+        Aseq = find_arithmetic_seq(unique_units[0], unique_units, 1)
+
+    # Super mixed dragon
+    if len(Aseq) == 8 and sum(SuitsPresence) > 1:
+        add_accolade(90)
+
     # Mixed flush, flushes, etc.
+
     match sum(SuitsPresence):
 
         case 0:
         # No normal tiles, only lucky tiles
-            ScoreL = ScoreL + 140
-            AccoladesL.append('Lucky Tiles Only - 140')
+            add_accolade(62)
 
         case 1:
             if LTPresent == 0: # No lucky tiles + 1 suit only
-                ScoreL = ScoreL + 80
-                AccoladesL.append('Full Flush - 80')
+                add_accolade(61)
             else:
-                ScoreL = ScoreL + 30
-                AccoladesL.append('Mixed Flush - 30')
+                add_accolade(60)
 
         case 2:
             if LTPresent == 0:
-                ScoreL = ScoreL + 5
-                AccoladesL.append('2 Non-Lucky Suits - 5')
+                add_accolade(59)
 
         case 3:
             if LTPresent == 1:
@@ -188,17 +154,18 @@ def ligu_score_count(WinningHandInner:list , WinningTile: list,
                         ScholarPresent = 1
 
                 if (WindPresent + ScholarPresent) == 2:
-                    ScoreL = ScoreL + 10
-                    AccoladesL.append('5 small Suits - 10')
+                    add_accolade(57)
 
     if self_drawn == 1:
-        ScoreL = ScoreL + 2
-        AccoladesL.append('Self Drawn - 2')
+        add_accolade(74)
+
+    # Base!!
+    add_accolade(75)
 
     # Final output
     final_hand = pairs * 2 + triplet * 3
     final_hand.sort()
-    return final_hand, ScoreL, AccoladesL
+    return final_hand, int(ScoreL), AccoladesL
 
 
 # Testing
@@ -206,5 +173,5 @@ if __name__ == "__main__":
     WinningHandInnerL = [11, 11, 12, 12, 13, 13, 14, 14, 35, 35, 16, 16, 17, 17, 17, 18]
     WinningHandOuterL = []
     WinningTileL = [18]
-    TestRes = ligu_score_count(WinningHandInnerL, WinningTileL, 1, 2, 3, [])
+    TestRes = ligu_score_count(WinningHandInnerL, WinningTileL, 1, 2, 3, [1,4,5,6])
     print(TestRes)

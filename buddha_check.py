@@ -15,6 +15,10 @@ def buddha_hand_validity_check(WinningHandInner, WinningHandOuter, WinningTile):
     # Checking the winning hand
     WinningHandTotal = WinningTile + WinningHandOuter + WinningHandInner
 
+    tileCount = unique_occurence_count(WinningHandTotal)
+    if max(tileCount) > 4:
+        return 0, [], [], []
+
     # Checking if there are outer tiles
     if len(WinningHandOuter) > 0:
         # Invalid hand condition

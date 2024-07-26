@@ -183,8 +183,8 @@ frame_canvas.bind(
 sty = ttk.Style()
 sty.theme_use('alt')
 sty.configure('inner_frame.TFrame', background='black') #bg color
-sty.configure('txtcol.TLabel', background='black', foreground='white', font=('Times New Roman', 12)) # text color
-sty.configure('button.TButton', background='#181818', foreground='white', relief='ridge', font=('Times New Roman', 11), padding=2) # Buttons
+sty.configure('txtcol.TLabel', background='black', foreground='white', font=('Century Gothic', 12)) # text color
+sty.configure('button.TButton', background='#181818', foreground='white', relief='ridge', font=('Century Gothic', 11), padding=2) # Buttons
 sty.map('button.TButton', background=[('active','#4594FF')])
 
 
@@ -193,7 +193,7 @@ sty.map('button.TButton', background=[('active','#4594FF')])
 
 frame = ttk.Frame(frame_canvas, padding=20, style='inner_frame.TFrame')
 frame.grid()
-ttk.Label(frame, text="Mahjong Score Counter", font=('Times New Roman', 18), style='txtcol.TLabel').grid(row=0, columnspan=20, sticky=W)
+ttk.Label(frame, text="Mahjong Score Counter", font=('Century Gothic', 18), style='txtcol.TLabel').grid(row=0, columnspan=20, sticky=W)
 
 # Outside Tiles
 OutsideTileCount = 0

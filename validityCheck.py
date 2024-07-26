@@ -5,7 +5,14 @@ def hand_validity_check(WinningHandInner, WinningHandOuter, WinningTile):
     WinningHandTotal = WinningTile + WinningHandOuter + WinningHandInner
     if not(listtypecheck(WinningHandTotal, int) == 1 and len(WinningHandTotal) == 17):
         WinningHandValid = 0
-        return WinningHandValid, [], [], [], []
+        return WinningHandValid, [], [], [], [], []
+    
+    # Check if any tile has more than 4 occurences
+    tileCount = unique_occurence_count(WinningHandTotal)
+    if max(tileCount) > 4:
+        WinningHandValid = 0
+        return WinningHandValid, [], [], [], [], []
+
     # Procedure: Find eye -> Check straights -> Check triplets
     # Assign 2 for WinningHandValid for actual winning hands
 
