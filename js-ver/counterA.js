@@ -514,7 +514,7 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
             // runs if tile count is 4 (4 in X) 
             // lucky tiles cannot have 4 in X so we should be fine
 
-            if (eyePair.includes(k)) {
+            if (eyePair.includes(Number(k))) {
                 accumulated_acc[accumulated_acc.length] = 55;
             }
             else if ( totalT_numTiles.includes(Number(k)) ) {
@@ -571,12 +571,12 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
         let sum_suits = 0;
         // sum of num suits
         for (let i of num_suits){
-            sum_num_suits = sum_num_suits + i;
-            sum_suits = sum_suits + i;
+            sum_num_suits = sum_num_suits + Number(i);
+            sum_suits = sum_suits + Number(i);
         }
         // sum of lt suits
         for (let i of lt_suits){
-            sum_suits = sum_suits + i;
+            sum_suits = sum_suits + Number(i);
         }
 
         // small big 5 suits
@@ -607,7 +607,7 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
         else if (sum_num_suits == 2) {
             if (lt_suits.toString() == [0,0].toString()) {
                 // no lucky tiles
-                accumulated_acc[accumulated_acc.length] = 62
+                accumulated_acc[accumulated_acc.length] = 59
             }
         }
 

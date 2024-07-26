@@ -18,9 +18,9 @@ async function eval_hand(){
     }
 
     // load params for score counting
-    const fsd = 1; // self drawn
-    const fwind = 1; // wind
-    const fseat = 1; // seat
+    const fsd = Number(document.getElementById('selfDrawn').checked); // self drawn
+    const fwind = Number(document.getElementById('wind').value); // wind
+    const fseat = Number(document.getElementById('seat').value); // seat
     const fflower = fl; // flowers
     // later link to website input!!
     

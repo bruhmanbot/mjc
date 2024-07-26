@@ -490,5 +490,59 @@
         "acco_name": "1 in 13",
         "points": 20,
         "double_on_conceal": 0
+    },
+    "82": {
+        "Index": 82,
+        "acco_name": "LiguLigu",
+        "points": 40,
+        "double_on_conceal": 0
+    },
+    "83": {
+        "Index": 83,
+        "acco_name": "1 in 8 LiguLigu",
+        "points": 10,
+        "double_on_conceal": 0
+    },
+    "84": {
+        "Index": 84,
+        "acco_name": "3 Consecutive Pairs",
+        "points": 5,
+        "double_on_conceal": 0
+    },
+    "85": {
+        "Index": 85,
+        "acco_name": "4 Consecutive Pairs",
+        "points": 10,
+        "double_on_conceal": 0
+    },
+    "86": {
+        "Index": 86,
+        "acco_name": "5 Consecutive Pairs",
+        "points": 20,
+        "double_on_conceal": 0
+    },
+    "87": {
+        "Index": 87,
+        "acco_name": "6 Consecutive Pairs",
+        "points": 40,
+        "double_on_conceal": 0
+    },
+    "88": {
+        "Index": 88,
+        "acco_name": "7 Consecutive Pairs",
+        "points": 80,
+        "double_on_conceal": 0
+    },
+    "89": {
+        "Index": 89,
+        "acco_name": "Blue Eyes White Dragon",
+        "points": 240,
+        "double_on_conceal": 0
+    },
+    "90": {
+        "Index": 90,
+        "acco_name": "Super Mixed Dragon",
+        "points": 80,
+        "double_on_conceal": 0
     }
 }

@@ -36,7 +36,7 @@ table {
 
 .selButton {
     font-weight: 600;
-    font-size: 100%;
+    font-size: 1vw;
     background-color: rgb(52, 52, 52);
     color: rgb(122, 122, 122);
     padding-left: 10px;
@@ -57,7 +57,7 @@ table {
 
 .selButton_selected {
     font-weight: 600;
-    font-size: 105%;
+    font-size: 1.1vw;
     background-color: rgb(0, 73, 0);
     color: white;
     padding-left: 10px;
@@ -73,13 +73,13 @@ table {
 }
 
 .popButton {
-    font-size:80%;
+    font-size:0.8vw;
     background-color: rgb(51, 51, 51);
     color: rgb(125, 125, 125);
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
     transition: all linear 0.05s;
     border-radius: 20px;
 }
@@ -105,17 +105,16 @@ table {
     background-color: whitesmoke;
 }
 
-.eva_b {
-    font-size: 75%;
-    background-color: coral;
+.clsButton {
+    font-size: 100%;
+    background-color: rgb(197, 26, 26);
     color: whitesmoke;
-    padding: 1%;
-    border-radius: 20px;
+    border-radius: 16px;
     transition: all linear 0.15s;
 }
 
-.eva_b:hover {
-    color: coral;
+.clsButton:hover {
+    color: rgb(197, 26, 26);
     background-color: whitesmoke;
 }
 
@@ -144,6 +143,26 @@ table {
     background-color: inherit;
 }
 
+.upperTable {
+    width: 100%;
+}
+.upperTable_cell {
+    width: auto;
+    vertical-align: top;
+    padding: 1%;
+}
+
+.links{
+    text-align: right;
+    vertical-align: bottom;
+}
+
+.selectbox {
+    color: whitesmoke;
+    background-color: rgb(59, 59, 59);
+    padding: 0.1vw;
+}
+
 .div_lowerRegion {
     width: 100%;
     border: 1px solid red;
@@ -154,16 +173,22 @@ table {
 }
 .div_tileEntry{
     border: 1px solid;
-
     padding: 10px;
     width: auto;
     float: left;
 }
 
+.div_otherParams{
+    height: auto;
+    float: left;
+    border: 1px rgb(162, 162, 255) solid;
+    display: inline;
+    padding: 10px;
+}
+
 .div_results{
     height: auto;
     float: left;
-    margin-left: 8.5vw;
     border: 1px rgb(162, 162, 255) solid;
     display: inline;
     padding: 10px;
@@ -182,6 +207,12 @@ table {
     
 }
 
+.div_refresh{
+    width: max-content;
+    text-align: right;
+    margin-left: auto;
+}
+
 #accolades{
     font-size: 80%;
     line-height: 1vw;
@@ -193,4 +224,8 @@ table {
 
 #flowerHeader{
     font-size: 150%;
+}
+
+#refresh_div_cell {
+    padding-right: 0%;
 }
