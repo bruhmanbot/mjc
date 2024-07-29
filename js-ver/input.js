@@ -134,6 +134,11 @@ function debug(type=null) {
             outer_arr = [];
             winner_arr = [46];
             break
+        case 'l':
+            inner_arr = [11, 11, 18, 18, 22, 22, 24, 24, 36, 36, 35, 35, 41, 41, 47, 47];
+            outer_arr = [];
+            winner_arr = [47];
+            break
         default:
             inner_arr = [18, 18, 19, 19, 19, 28, 28, 29, 29, 29, 37, 37, 37];
             outer_arr = [44, 44, 44];

@@ -255,6 +255,10 @@ export async function score_count_b(numTiles, eye, wTile, sd, wind, seat, flower
             break
     }
 
+    if (sd) {
+        acc_accolade[acc_accolade.length] = 74;
+    }
+
     // counting up the final scores (and add base here)
     const finalResult = sum_accolades(acc_accolade, fl_score, 0, 0); // 0 for wind and scholarscore
 

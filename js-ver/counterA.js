@@ -327,9 +327,10 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
                     const looping = lu.find_index_duplicate_item(Number(s), totalS_u);
                     // rs here should store 2 indices in a list ;; rs = [4, 5]
                     for (let i = 0; i<looping.length;i++){
-                        rs[i] = looping[i];
+                        rs[i] = totalS[looping[i]][0];
                         // changing rs into the actual straights
                     }
+
                     rs_set = new Set(rs);
                     if (rs_set.size == 2) {
                         // indicate that the 2 sets are of different suits
@@ -673,16 +674,17 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
         if (yj_present == 2){
             let all_yj = true;
 
-            for (kan of totalT) {
-                let is_yj = false;
+            let is_yj;
+            for (kan of totalS.concat(totalT)) {
+                is_yj = false;
                 for (const tile of kan) {
                     if (yj_list.includes(tile) || tile > 40) {
                         is_yj = true;
                         break
                     } 
                 } // is_yj stays false if none of the tiles in kan are yj/lucky tiles
-
-                if (!(is_yj)) {
+            
+                if (is_yj == false) {
                     // not yj
                     all_yj = false;
                     break

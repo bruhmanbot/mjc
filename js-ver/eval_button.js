@@ -1,6 +1,7 @@
 import { score_count_A } from './counterA.js';
 import { validityCheck } from './validityCheckJS.js';
 import * as bd from './buddha.js';
+import * as ligu from './ligu.js';
 
 
 async function eval_hand(){
@@ -8,9 +9,10 @@ async function eval_hand(){
     // running the 3 validity checks
     const validityResultsA = validityCheck(inner_arr, outer_arr, winner_arr);
     const validityResultsB = bd.buddhaCheck(inner_arr, outer_arr, winner_arr);
+    const validityResultsL = ligu.liguCheck(inner_arr, outer_arr, winner_arr);
     
 
-    if (validityResultsA[0] + validityResultsB[0] == 0) {
+    if (validityResultsA[0] + validityResultsB[0] + validityResultsL[0] == 0) {
         document.getElementById('accolades').innerHTML = 'Cheating!! - -300'
         document.getElementById('score').innerHTML = '-300'
         return 
@@ -34,8 +36,6 @@ async function eval_hand(){
         const ot = validityResultsA[4];
         const eye = validityResultsA[5];
 
-        
-
         const scoreA_results= await score_count_A(is, it, os, ot, eye, winner_arr, 
             fsd, fwind, fseat, fflower);
         
@@ -45,10 +45,46 @@ async function eval_hand(){
     
         const accolade_output_txt = scoreA_results[1];
     
+        // double!
+        if (validityResultsL[0] == 1) {
+            const pairs = validityResultsL[1];
+            const triplet = validityResultsL[2];
     
-        // set txt
+            const scoreL_results = await ligu.score_count_L(pairs, triplet, winner_arr, fwind, fseat, fsd, fflower);
+    
+            // allocate the results
+            const sc_L = scoreL_results[0];
+            const accolade_output_txt_L = scoreL_results[1];
+    
+            // set txt
+            // double!
+            document.getElementById('accolades').innerHTML = accolade_output_txt + '<br>' + accolade_output_txt_L;
+            document.getElementById('score').innerHTML = sc_L + sc;
+            return
+        
+        
+        }
+        // set txt   
         document.getElementById('accolades').innerHTML = accolade_output_txt;
         document.getElementById('score').innerHTML = sc;
+        return
+    }
+
+
+    if (validityResultsL[0] == 1) {
+        const pairs = validityResultsL[1];
+        const triplet = validityResultsL[2];
+
+        const scoreL_results = await ligu.score_count_L(pairs, triplet, winner_arr, fwind, fseat, fsd, fflower);
+
+        // allocate the results
+        const sc_L = scoreL_results[0];
+        const accolade_output_txt_L = scoreL_results[1];
+        
+        document.getElementById('accolades').innerHTML = accolade_output_txt_L;
+        document.getElementById('score').innerHTML = sc_L;
+        
+
     }
 
     if (validityResultsB[0] == 1) {
@@ -83,15 +119,6 @@ async function eval_hand(){
         document.getElementById('accolades').innerHTML = accolade_output_txt_13;
         document.getElementById('score').innerHTML = sc_13;
     }
-    
-    
-
-    
-    
-
-    
-
-    
 }
 
 
