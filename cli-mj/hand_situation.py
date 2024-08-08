@@ -1,5 +1,5 @@
 import sys
-sys.path.append('P:/mjc-main/mjcpy')
+sys.path.append('C:/Users/Asus/Documents/GitHub/mjc/mjc-py')
 
 from listUtils import * # type: ignore
 

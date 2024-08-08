@@ -68,13 +68,16 @@ if __name__ == '__main__':
     epochs = 20000
     data = []
 
-    print('multi starting~')    
+    print('single core process starting~')    
     data = [0] * epochs
     start = time.time()
     
     poo = Pool(processes=4)
     results = poo.map(simulate_game, data)
 
+    end2 = time.time()
+    delta2 = end2-start
+    
     end2 = time.time()
     delta2 = end2-start
 

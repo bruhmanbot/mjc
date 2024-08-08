@@ -2,7 +2,7 @@ from accoladeClass import Acco
 import pandas as pd
 
 
-def accoladecsv_init(path='tw_accolades_info.csv') -> list:
+def accoladecsv_init(path=r'C:/Users/Asus/Documents/GitHub/mjc/mjc-py/tw_accolades_info.csv') -> list:
     # Initialises the accolade information and loads them onto an output list
     # Using path as a way to point which file to go to
     # Default is taiwan scoring
