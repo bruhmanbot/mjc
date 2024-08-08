@@ -2,7 +2,7 @@ import sys
 sys.path.append('P:/mjc-main/mjcpy')
 import random
 
-from validityCheck import * # type: ignore
+from mjc_py.validityCheck import * # type: ignore
 
 def deckInit():
     # Create a deck of the 144 tiles
