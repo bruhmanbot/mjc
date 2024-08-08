@@ -60,19 +60,27 @@ def simulate_game(threshold=0, mode='large'):
         if len(callers.keys()):
             # WE HAVE WINNING TILES
             tilesUsed = 120 - len(tileDeck)
-            return (handScore, tilesUsed, list(callers.keys()))
+            # NORMAL RETURN STATEMENT
+            # return (handScore, tilesUsed, list(callers.keys()))
+        
+            # CURA MODE
+            if len(callers.keys()) >= 4:
+                player1_hand.sort()
+                return (player1_hand, list(callers.keys()))
+            else:
+                return
 
 if __name__ == '__main__':
     import time
     
-    epochs = 20000
+    epochs = 30000
     data = []
 
-    print('single core process starting~')    
+    print('Multi core process starting~')    
     data = [0] * epochs
     start = time.time()
     
-    poo = Pool(processes=4)
+    poo = Pool(processes=5)
     results = poo.map(simulate_game, data)
 
     end2 = time.time()
@@ -90,6 +98,6 @@ if __name__ == '__main__':
 
     df = pd.DataFrame(results)
 
-    df.to_csv('./analysis_files/calling/gameplay_calling2.csv')
+    df.to_csv('./analysis_files/calling/insane_hands.csv')
 
     print ('results added to csv file')

@@ -107,5 +107,5 @@ if __name__ == "__main__":
     WinningHandInnerT = [13, 14, 15, 16, 17, 18, 19, 16, 34, 35]
     WinningHandOuterT = [23, 24, 25, 41, 41, 41]
     WinningTileT = [36]
-
+    
     print(hand_validity_check(WinningHandInnerT, WinningHandOuterT, WinningTileT))
