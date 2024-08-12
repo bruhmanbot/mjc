@@ -10,7 +10,7 @@ def removelt(list1: list, threshold=40):
     return list(filtered_list), list(removed_items)
 
 
-def hand_eval(inner_hand, priority='str'):
+def hand_eval(inner_hand, outer_hand, priority='str'):
     # Evaluates the current situation of the hand
     # Returns completed sets and half completed sets
 
@@ -102,7 +102,11 @@ def hand_eval(inner_hand, priority='str'):
 
         partialSets = [openStraights , pairs , kalong, edgeStraights]
         partialSetsScore = len(openStraights) * 0.5 + len(pairs) * 0.5 + len(kalong) * 0.25 + len(edgeStraights) * 0.25
-        fullScore = partialSetsScore + numCompletedSets * 2 # + outsideSets
+
+        # Assuming all outside sets are already complete to save time
+        outside_score = 2 * int(len(outer_hand) / 3)
+
+        fullScore = partialSetsScore + numCompletedSets * 2 + outside_score
 
         return fullScore, partialSets, remTiles
     
@@ -175,13 +179,17 @@ def hand_eval(inner_hand, priority='str'):
 
         partialSets = [openStraights , pairs , kalong, edgeStraights]
         partialSetsScore = len(openStraights) * 0.5 + len(pairs) * 0.5 + len(kalong) * 0.25 + len(edgeStraights) * 0.25
-        fullScore = partialSetsScore + numCompletedSets * 2 # + outsideSets
+
+        # Assuming all outside sets are already complete to save time
+        outside_score = 2 * int(len(outer_hand) / 3)
+
+        fullScore = partialSetsScore + numCompletedSets * 2 + outside_score
 
         return fullScore, partialSets, remTiles
 
 if __name__ == '__main__':
-    hand = [15, 16, 17, 23, 24, 27, 28, 29, 31, 32, 33, 35, 35, 38, 47]
+    hand = [11, 12, 13, 14, 15, 15, 16, 17, 18, 18, 33, 33, 33, 35, 36, 37]
 
-    eval = hand_eval(hand)
+    eval = hand_eval(hand, [])
 
     print(eval)

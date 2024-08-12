@@ -1,6 +1,6 @@
 # How to optimally discard?
 
-from usefulTiles import usefulness_ps, usefulness_ss, sortdict
+from usefulTiles import usefulness_ps, usefulness_ss
 from hand_situation import *
 from drawing_game import *
 
@@ -10,7 +10,7 @@ sys.path.append('P:/mjc-main/mjcpy')
 
 from listUtils import * # type: ignore
 
-def getRandomUselessTile(tileDict: dict) -> int:
+def getRandomUselessTile(tileDict: dict) -> any:
     # Matches the tile info against the min and see if it is the most useless one
     # gets all the useless tiles and outputs a random one : Simulate human behaviour
     worst = []
@@ -88,7 +88,7 @@ def findOptimalDiscard(inner_hand:list, knownPile:list) -> int:
 if __name__ == '__main__':
     known = [11, 12, 13, 14, 14, 15, 17, 18, 22, 25, 25, 26, 27, 36, 37, 43, 45]
 
-    hand = [11, 12, 13, 14, 14, 15, 17, 18, 22, 25, 25, 26, 27, 36, 37, 43, 45]
+    hand = [11, 12, 13, 14, 15, 18, 18, 33, 33, 33, 35, 36, 37, 23]
 
     print(findOptimalDiscard(hand, known))
         

@@ -1,17 +1,21 @@
 # the playground for calling
 # Only analysis up to the calling point
 
-from hand_situation import *
-from usefulTiles import *
 from drawing_game import *
-from optimalDiscard import *
-from check_calling import check_calling_tiles
+from buddhastrats import buddha_findBestDiscard
+from check_calling import check_calling_tiles_bd
+from hand_situation import hand_eval
 
 import pandas as pd
 from multiprocessing import Pool
 
+import sys
+sys.path.append('P:/mjc-main/mjcpy')
+from buddha_check import buddha_hand_validity_check # type: ignore
 
-def simulate_game(threshold=0, mode='large'):
+
+
+def simulate_game_bd(threshold=0, mode='large'):
     tileDeck = deckInit()
     discard = []
 
@@ -21,7 +25,7 @@ def simulate_game(threshold=0, mode='large'):
 # Clear the list
     player1_hand.sort()
 
-    handScore, partial, singles = hand_eval(player1_hand, priority='pair')
+    handScore, partial, singles = hand_eval(player1_hand, priority='str')
 
     if mode == 'large':
         if handScore <= threshold:
@@ -29,6 +33,9 @@ def simulate_game(threshold=0, mode='large'):
     else:
         if handScore > threshold:
             return (0), 0
+        
+    startingLT = list(filter(lambda x: x>40, player1_hand))
+    numStartingLT = len(set(startingLT))
 
     while True:
     # Print tiles remaining in the sea
@@ -40,53 +47,43 @@ def simulate_game(threshold=0, mode='large'):
 
         player1_hand, player1_flowers, tileDeck = playerdraw(player1_hand, player1_flowers, tileDeck)
 
-    # print (f'Current hand: {player1_hand}')
-    # # print (f'Flowers obtained: {player1_flowers}')
-    
+
         
     # print (f'Hand score: {handScore}')
 
     # print(countUsefulTiles(partial, singles, discard))
-        bestDiscard = findOptimalDiscard(player1_hand, (discard+player1_hand))
-
+        bestDiscard: int = buddha_findBestDiscard(player1_hand, (discard+player1_hand))
+        # print(f'Suggested discard: {bestDiscard}')
     # Ask discard tile
-    # dcTile = askdiscard(player1_hand)
         discard.append(bestDiscard)
-        player1_hand.remove(int(bestDiscard))
+        player1_hand.remove(bestDiscard)
 
-    # callers
-    # see if we can win on the next go (potentially)
-        callers = check_calling_tiles(inner_hand=player1_hand, outer_hand=[])
-        if len(callers.keys()):
-            # WE HAVE WINNING TILES
-            tilesUsed = 120 - len(tileDeck)
-            return (handScore, tilesUsed, list(callers.keys()))
+        player1_hand.sort()
+
+    # check hand - calling analysis
+        bdvalid_calling:dict = check_calling_tiles_bd(player1_hand, [], output_score=False)
+
+        if len(bdvalid_calling.keys()) > 0:
+            outputTuple = (handScore, 120 - len(tileDeck), numStartingLT, tuple(bdvalid_calling.keys()))
+            return outputTuple
 
 if __name__ == '__main__':
     import time
     
     epochs = 20000
-    data = []
 
-    print('multi starting~')    
+    
     data = [0] * epochs
     start = time.time()
     
+    print('Multi starting~')    
     poo = Pool(processes=4)
-    results = poo.map(simulate_game, data)
+    results = poo.imap_unordered(simulate_game_bd, data)
+
+    df = pd.DataFrame(results, columns=['openingScore', 'tileUsed', 'startingLT', 'keys'])
 
     end2 = time.time()
     delta2 = end2-start
-
     print(f'Multi mode finished in {delta2}s')
 
-
-    # end = time.time()
-    # delta = end-start
-    # print(f'done simulation in {delta}s')
-
-    df = pd.DataFrame(results)
-
-    df.to_csv(r'P:/mjc-main/cli-mj/analysis_files/calling/gameplay_calling2.csv')
-
-    print ('results added to csv file')
+    df.to_csv(r'P:/mjc-main/cli-mj/analysis_files/bd_calling.csv')

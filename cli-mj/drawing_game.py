@@ -4,7 +4,7 @@ import random
 
 from validityCheck import * # type: ignore
 
-def deckInit():
+def deckInit(flowers=False):
     # Create a deck of the 144 tiles
     deck = []
 
@@ -16,9 +16,10 @@ def deckInit():
     deck = deck * 4
 
     # # Add the flowers
-    # flower = [(i+1) for i in range(8)]
-    # # + flower
-    # deck = deck + flower
+    if flowers:
+        flower = [(i+1) for i in range(8)]
+        # + flower
+        deck = deck + flower
 
     # shuffle
     random.shuffle(deck)
