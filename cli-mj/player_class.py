@@ -2,7 +2,7 @@ from drawing_game import *
 from liguStrats import findOptimalDiscardLigu
 from optimalDiscard import findOptimalDiscard, getRandomUselessTile
 from buddhastrats import buddha_findBestDiscard
-from hand_situation import hand_eval
+from hand_situation import hand_eval, hand_eval_adv
 from check_calling import *
 from usefulTiles import *
 
@@ -142,19 +142,23 @@ class gambler:
         ps = []
         # Tile in question
         tile = discard[-1]
+        print(f'tile: {tile}')
         if discard[-1] > 40:
             # bruh
             return []
-        elif (tile - 1 and tile + 1) in self.inner_hand:
+        if (tile - 1 in self.inner_hand) and (tile + 1 in self.inner_hand):
             # Check for kalong case
             up_feasible = True
+            print('mid')
             ps.append([tile - 1, tile + 1])
-        elif (tile - 1 and tile - 2) in self.inner_hand:
+        if (tile + 1 in self.inner_hand) and (tile + 2 in self.inner_hand):
             up_feasible = True
-            ps.append([tile - 1, tile - 2])
+            print('low')
+            ps.append([tile + 1, tile + 2])
         
-        elif (tile + 1 and tile + 2) in self.inner_hand:
+        if (tile - 1 in self.inner_hand) and (tile - 2 in self.inner_hand):
             up_feasible = True
+            print('high')
             ps.append([tile - 1, tile - 2])
 
         # Exit if up is not feasible
@@ -172,8 +176,7 @@ class gambler:
                 innerHandAfterUp.remove(pt)
                 outerHandAfterUp.append(pt)
             
-            eval_afterUp = hand_eval(innerHandAfterUp, outerHandAfterUp)
-            print(eval_afterUp)
+            eval_afterUp = hand_eval_adv(innerHandAfterUp, outerHandAfterUp)
 
             # Assign score for each method
             comp_dict[tuple(method)] = eval_afterUp[0]
@@ -187,7 +190,7 @@ class gambler:
         best_ps = []
         for method in comp_dict:
             if comp_dict[method] == max(comp_dict.values()):
-                best_ps.append(method.sort())
+                best_ps.append(method)
 
         # In the case where only 1 method prevails
         if len(best_ps) == 1:
@@ -195,6 +198,7 @@ class gambler:
         
         # Multiple methods prevail (at most 3)
         # Choose the (random) partial set with the least amt of useful tiles (cuz its hard to come by)
+        print (best_ps)
         best_ps_dict = usefulness_ps(best_ps, knownPile=known_pile)
 
         # The getRandomUselessTile function outputs the key of the dict, which is a tuple

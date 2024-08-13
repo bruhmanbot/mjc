@@ -18,7 +18,7 @@ def simulate_game(threshold=0, mode='large'):
 # Clear the list
     player1_hand.sort()
 
-    handScore, partial, singles = hand_eval(player1_hand, priority='pair')
+    handScore, partial, singles = hand_eval(player1_hand, [])
 
     if mode == 'large':
         if handScore <= threshold:
@@ -62,22 +62,28 @@ def simulate_game(threshold=0, mode='large'):
         player1_hand.sort()
 
 if __name__ == '__main__':
-    epochs = 2000
+    import time
+    epochs = 5000
     data = []
     i = 0
+    start = time.time()
     while i < epochs:
-        game = simulate_game(threshold=7.1)
+        game = simulate_game(threshold=5)
         if game[1]:
             data.append(game)
             i = i + 1
         else:
             continue
+            
+        if i % (epochs/10) == 0:
+            print(i)
 
-
-    print ('done simulation')
+    delta = time.time() - start
+    
+    print (f'done simulation in {delta}s')
 
     df = pd.DataFrame(data)
 
-    df.to_csv('./gameplay_mkpair_cura.csv')
+    df.to_csv('./gameplay_mk3.csv')
 
     print ('results added to csv file')

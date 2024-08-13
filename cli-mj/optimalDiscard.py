@@ -35,7 +35,7 @@ def findOptimalDiscard(inner_hand:list, knownPile:list) -> int:
     # Useless partial sets --> 0% to make full set
     # singles --> Slight chance to make full set (but not quick)
     # Partial sets --> Almost complete (high chance to reach complete set)
-    hScore, partialSets, singleTiles = hand_eval(inner_hand, 'str')
+    hScore, partialSets, singleTiles = hand_eval_adv(inner_hand, [])
 
     # Running the usefulness function
     psInfo = usefulness_ps(partialSets, knownPile)

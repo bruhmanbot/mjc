@@ -5,7 +5,8 @@ from matplotlib import pyplot as plt
 
 epochs = 100000
 openingScoreTable = [];
-
+counter = 0
+old_underest = 0
 for i in range(epochs):
     tileDeck = deckInit()
     # original draw of 16 tiles
@@ -26,24 +27,30 @@ for i in range(epochs):
     player1_drawnTiles = []
     player1_hand.sort()
 
-    openingScore = hand_eval(player1_hand)
-    openingScoreTable.append(openingScore[0])
+    openingScore = hand_eval(player1_hand, [])
+    openingScore2 = hand_eval_adv(player1_hand, [])
+    if openingScore[0] != openingScore2[0]:
+        counter += 1
+    if openingScore[0] < openingScore2[0]:
+        old_underest += openingScore2[0] - openingScore[0]
 
+print(f'times diff: {counter}')
+print(f'avg underest: {old_underest/counter}')
 
-openingScoreTable.sort()
-openingScoreSet = set(openingScoreTable)
+# openingScoreTable.sort()
+# openingScoreSet = set(openingScoreTable)
 
-openingScoreDist = {}
+# openingScoreDist = {}
 
-for i in openingScoreSet:
-    openingScoreDist[i] = openingScoreTable.count(i)
+# for i in openingScoreSet:
+#     openingScoreDist[i] = openingScoreTable.count(i)
 
-print (openingScoreDist)
+# print (openingScoreDist)
 
-data_df = pd.DataFrame.from_dict(openingScoreDist, orient='index')
-data_df.sort_index(axis=0, ascending=True, inplace=False, kind='quicksort')
+# data_df = pd.DataFrame.from_dict(openingScoreDist, orient='index')
+# data_df.sort_index(axis=0, ascending=True, inplace=False, kind='quicksort')
 
-data_df.to_csv('opening.csv')
+# data_df.to_csv('opening.csv')
 
 # x = data_df.index
 # y = data_df[0]

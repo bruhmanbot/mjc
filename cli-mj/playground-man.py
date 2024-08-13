@@ -18,7 +18,7 @@ def simulate_game(threshold=0, mode='large'):
 # Clear the list
     player1_hand.sort()
 
-    handScore, partial, singles = hand_eval(player1_hand)
+    handScore, partial, singles = hand_eval_adv(player1_hand)
 
     if mode == 'large':
         if handScore <= threshold:
