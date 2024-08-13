@@ -144,3 +144,46 @@ def unpack_list(list_unpack: list) -> list:
     for nested_list in list_unpack:
         output_list = output_list + nested_list
     return output_list
+
+def list_XOR(list_ref:list, list_remove:list, remove_all=False) -> list:
+    # Considers the items in list_remove and removes them from list_ref
+    # Removes all if True, removes only 1 instance if false
+    # Returns the modified list_ref
+    list_ref_wk = list_ref.copy()
+    for t in list_remove:
+        if remove_all:
+            while list_ref.count(t) > 0:
+                list_ref_wk.remove(t)
+        elif t in list_ref_wk:
+            # Remove only 1 instance when remove_all = False
+            list_ref_wk.remove(t)
+        else: 
+            return "not a subset"
+
+    return list_ref_wk
+
+def swap(list_swap: list, ind_a: int, ind_b: int):
+    # sub function for swapping elements in list
+    t = list_swap[ind_a]
+    list_swap[ind_a] = list_swap[ind_b]
+    list_swap[ind_b] = t
+    return
+
+def sort_straights(list_straights: list[list[int]]) -> None:
+    # sorts the nest lists of the straights based on a (revised) bubblesort approach
+
+    while True:
+        swapped = False
+        j = 1
+        while j <= (len(list_straights) - 1):
+
+            if list_straights[j][0] < list_straights[j-1][0]:
+                # Swap if incorrect
+                swap(list_straights, j, j-1)
+                swapped = True
+            j = j + 1
+
+        if not swapped:
+            break
+
+    return
