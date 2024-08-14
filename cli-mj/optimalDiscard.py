@@ -25,7 +25,7 @@ def getRandomUselessTile(tileDict: dict) -> any:
 
     
 
-def findOptimalDiscard(inner_hand:list, knownPile:list) -> int:
+def findOptimalDiscard(inner_hand:list, knownPile:list, full_eval_mode=False, priority='str') -> int:
     # Uses functions to see which tile is the least useful
     # Flow -> Identify sets and partial sets
     # Runs functions to see amt of useful tiles for partial sets
@@ -35,7 +35,12 @@ def findOptimalDiscard(inner_hand:list, knownPile:list) -> int:
     # Useless partial sets --> 0% to make full set
     # singles --> Slight chance to make full set (but not quick)
     # Partial sets --> Almost complete (high chance to reach complete set)
-    hScore, partialSets, singleTiles = hand_eval_adv(inner_hand, [])
+    
+    # Run the recursion (deeper analysis version) if specified
+    if full_eval_mode:
+        hScore, partialSets, singleTiles = hand_eval_adv(inner_hand, [])
+    else:
+        hScore, partialSets, singleTiles = hand_eval(inner_hand, [], priority=priority)
 
     # Running the usefulness function
     psInfo = usefulness_ps(partialSets, knownPile)

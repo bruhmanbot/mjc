@@ -21,7 +21,7 @@ def simulate_game(threshold=0, mode='large'):
 # Clear the list
     player1_hand.sort()
 
-    handScore, partial, singles = hand_eval(player1_hand, priority='pair')
+    handScore, partial, singles = hand_eval(player1_hand, [])
 
     if mode == 'large':
         if handScore <= threshold:
@@ -47,7 +47,7 @@ def simulate_game(threshold=0, mode='large'):
     # print (f'Hand score: {handScore}')
 
     # print(countUsefulTiles(partial, singles, discard))
-        bestDiscard = findOptimalDiscard(player1_hand, (discard+player1_hand))
+        bestDiscard = findOptimalDiscard(player1_hand, (discard+player1_hand), full_eval_mode=True)
 
     # Ask discard tile
     # dcTile = askdiscard(player1_hand)
@@ -65,7 +65,7 @@ def simulate_game(threshold=0, mode='large'):
 if __name__ == '__main__':
     import time
     
-    epochs = 20000
+    epochs = 30000
     data = []
 
     print('multi starting~')    
@@ -87,6 +87,6 @@ if __name__ == '__main__':
 
     df = pd.DataFrame(results)
 
-    df.to_csv(r'P:/mjc-main/cli-mj/analysis_files/calling/gameplay_calling2.csv')
+    df.to_csv(r'P:/mjc-main/cli-mj/analysis_files/calling/gameplay_calling_mk3-lib2.csv')
 
     print ('results added to csv file')

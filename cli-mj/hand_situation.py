@@ -46,7 +46,7 @@ def hand_eval(inner_hand, outer_hand, priority='str'):
         numCompletedSets = (len(straights) + len(triplets)) / 3
 
         # Finds partial sets for the remaining tiles
-        
+        remTiles = remTiles + LT
         remTiles.sort()
         partialSetsScore, partialSets, singles = partial_set_eval(remTiles, priority='pair')
 
@@ -270,7 +270,7 @@ def hand_eval_adv(inner_hand: list, outer_hand: list) -> object:
     # Add outer_hand things
     best_combs_score = best_combs_score + 2 * len(outer_hand) / 3
 
-
+    # Hand score, partial sets, singled tiles
     return best_combs_score, combinationsTierDB[chosen_comb][1], combinationsTierDB[chosen_comb][2]
 
 
@@ -280,7 +280,7 @@ def hand_eval_adv(inner_hand: list, outer_hand: list) -> object:
 
 if __name__ == '__main__':
     import time # timing function runtime
-    hand = [12, 12, 12, 13, 14, 15]
+    hand = [12, 12, 12, 13, 14, 15, 27]
 
     hand.sort()
     ## SIMPLE MODE

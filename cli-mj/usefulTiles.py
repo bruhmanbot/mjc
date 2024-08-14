@@ -86,7 +86,7 @@ def usefulness_ps(partialSets: list, knownPile: list):
 
     # Open ended straights, appends num of useful tiles to a dictionary
     for ps in partialSets[0]:
-        outputdict[tuple(ps)] = (4 - knownPile.count(ps[0] - 1)) + (4 - knownPile.count(ps[0] + 1))
+        outputdict[tuple(ps)] = (4 - knownPile.count(ps[0] - 1)) + (4 - knownPile.count(ps[0] + 2))
 
     # Pairs
     for ps in partialSets[1]:

@@ -65,7 +65,7 @@ def playerdraw(dest_hand: list, dest_flowers:list, deck:list) -> None:
     out_flowers.sort()
     return out_hand, out_flowers, out_deck
 
-def askdiscard(playerHand: list):
+def askdiscard(playerHand: list) -> int:
     m = input('Discard tile?')
 
     while True:
@@ -77,7 +77,7 @@ def askdiscard(playerHand: list):
         # Breaks when m is valid
 
         if int(m) in playerHand:
-            return m
+            return int(m)
         else:
             m = input('again?')      
 

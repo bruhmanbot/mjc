@@ -18,7 +18,7 @@ def simulate_game(threshold=0, mode='large'):
 # Clear the list
     player1_hand.sort()
 
-    handScore, partial, singles = hand_eval_adv(player1_hand)
+    handScore, partial, singles = hand_eval_adv(player1_hand, [])
 
     if mode == 'large':
         if handScore <= threshold:
@@ -52,6 +52,8 @@ def simulate_game(threshold=0, mode='large'):
     # print (f'Hand score: {handScore}')
 
     # print(countUsefulTiles(partial, singles, discard))
+        eval_adv = hand_eval_adv(player1_hand, [])
+        print(eval_adv)
         bestDiscard = findOptimalDiscard(player1_hand, (discard+player1_hand))
         print(bestDiscard)
         # Ask discard tile
