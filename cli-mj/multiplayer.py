@@ -22,14 +22,13 @@ def nextplayerindex(current_index:int):
     else:
         return (current_index + 1)
 
-
-if __name__ == '__main__':
+def spgame_loop(first_player:int=0, printf=True):
     # gamers
     gamers = [0 ,0, 0, 0]
-    gamers[0] = gambler('me', 1)
-    gamers[1] = gambler('ai_1', 0)
+    gamers[0] = gambler('me2', 1)
+    gamers[1] = gambler('ai_1', 1)
     gamers[2] = gambler('ai_2', 0)
-    gamers[3] = gambler('ai_3', 0)
+    gamers[3] = gambler('ai_3', 1)
 
     # init deck and give everyone tiles in order
     tileDeck = deckInit(flowers=False)
@@ -38,8 +37,8 @@ if __name__ == '__main__':
         g.evalhand()
         
     # main body loop of play
-    activePlayer:int = 0 # index of the current active player, starting off with 0
-    humanIndex: int = 0
+    activePlayer:int = first_player % 4 # index of the current active player, starting off with 0
+    humanIndex: int = -1
     gameDiscards = []
     # public domain should be continuously updated
     publicDomain = []
@@ -52,26 +51,28 @@ if __name__ == '__main__':
         gamers[activePlayer].disc(playerDiscard, gameDiscards, publicDomain)
     else:
         # CPU Startng
-        gamers[activePlayer].playturn()
+        gamers[activePlayer].playturn(tileDeck, gameDiscards, publicDomain)
 
 
     while True:
         lastTile = gameDiscards[-1]
         # Evaluating if anyone wins
-        winnerPresent = False
+        winners = []
         for g in gamers:
             # that gamer was calling on that tile
             if lastTile in g.calling:
-                print(f'{g.playerID} has won on {lastTile} discarded by {gamers[activePlayer].playerID}; with hand:')
-                print(f'{g.inner_hand} || {g.outer_hand} || < {lastTile} >')
-                winnerPresent = True
-        if winnerPresent:
+                # print(f'{g.playerID} has won on {lastTile} discarded by {gamers[activePlayer].playerID}; with hand:')
+                # print(f'{g.inner_hand} || {g.outer_hand} || < {lastTile} >')
+                winners.append(g.playerID)
+
+        # Breaks the whole loop (and function if someone wins) // draw        
+        if len(winners):
             # More than one winner can win at the same time
-            break
+            return winners
 
         if len(tileDeck) == 0:
-            print('Game ended in draw')
-            break
+            # print('Game ended in draw')
+            return ['Draw']
 
         # Evaluate for pongs
         pongPlayerIndex = -1 # later will be changed to positive integer if someone pongs
@@ -109,8 +110,9 @@ if __name__ == '__main__':
                 # This will get player to pong and discard a tile
                 pairPong = [lastTile, lastTile]
                 gamers[pongPlayerIndex].pong(pairPong, gameDiscards, publicDomain)
-                print(f'{gamers[pongPlayerIndex].playerID} PONGED {lastTile} discarded by {gamers[activePlayer].playerID}')
-                print(f'{gamers[pongPlayerIndex].playerID} discarded {gameDiscards[-1]}')
+                if printf:
+                    print(f'{gamers[pongPlayerIndex].playerID} PONGED {lastTile} discarded by {gamers[activePlayer].playerID}')
+                    print(f'{gamers[pongPlayerIndex].playerID} discarded {gameDiscards[-1]}')
 
                 activePlayer = pongPlayerIndex 
 
@@ -126,9 +128,10 @@ if __name__ == '__main__':
             if activePlayer != humanIndex:
                 # The up function will already ask the user for a discard if applicable
                 gamers[activePlayer].up(nextPlayerUpPS, gameDiscards, publicDomain)
-                print(f'{gamers[activePlayer].playerID} UPPED {lastTile} discarded by {gamers[activePlayer-1].playerID}')
-                print(f'{gamers[activePlayer].playerID} displayed tiles: {gamers[activePlayer].outer_hand}')
-                print(f'{gamers[activePlayer].playerID} discarded {gameDiscards[-1]}')
+                if printf:
+                    print(f'{gamers[activePlayer].playerID} UPPED {lastTile} discarded by {gamers[activePlayer-1].playerID}')
+                    print(f'{gamers[activePlayer].playerID} displayed tiles: {gamers[activePlayer].outer_hand}')
+                    print(f'{gamers[activePlayer].playerID} discarded {gameDiscards[-1]}')
                 continue
 
             if len(nextPlayerPONG):
@@ -140,6 +143,8 @@ if __name__ == '__main__':
                         gamers[activePlayer].pong(nextPlayerPONG, gameDiscards, publicDomain)
                     else:
                         gamers[activePlayer].up(nextPlayerUpPS, gameDiscards, publicDomain)
+                    
+                    continue
                 else:
                     pass
             else:
@@ -150,17 +155,24 @@ if __name__ == '__main__':
                 if bool(playerFreeChoice):
                     gamers[activePlayer].up(nextPlayerUpPS, gameDiscards, publicDomain)
                     continue
+
+                
+            ...
+            # Need extra code here to tell players exactly how they can UP
+                
                 
         elif len(nextPlayerPONG):
-            if nextplayerindex(activePlayer) != humanIndex:
+            if activePlayer != humanIndex:
                 # The up function will already ask the user for a discard if applicable
                 gamers[activePlayer].pong(nextPlayerPONG, gameDiscards, publicDomain)
-                print(f'{gamers[activePlayer].playerID} PONGED {lastTile} discarded by {gamers[activePlayer-1].playerID}')
-                print(f'{gamers[activePlayer].playerID} displayed tiles: {gamers[activePlayer].outer_hand}')
-                print(f'{gamers[activePlayer].playerID} discarded {gameDiscards[-1]}')
+                if printf:
+                    print(f'{gamers[activePlayer].playerID} PONGED {lastTile} discarded by {gamers[activePlayer-1].playerID}')
+                    print(f'{gamers[activePlayer].playerID} displayed tiles: {gamers[activePlayer].outer_hand}')
+                    print(f'{gamers[activePlayer].playerID} discarded {gameDiscards[-1]}')
                 continue
-
-            print(f"You can pong on {lastTile} discarded by {gamers[activePlayer].playerID}." + 
+            
+            # ELSE
+            print(f"You can pong on {lastTile} discarded by {gamers[activePlayer-1].playerID}." + 
                 "\nDo you want to do so? (input smth if u want, and nothing if you dont)")
             playerFreeChoice = input()
             if bool(playerFreeChoice):
@@ -173,24 +185,60 @@ if __name__ == '__main__':
                 pass
 
 
-            ...
-            # Need extra code here to tell players exactly how they can UP
-                
             
         # Normal drawing
         if activePlayer == humanIndex:
             gamers[humanIndex].draw(tileDeck)
+            # Check for win by sumo
+            if gamers[humanIndex].inner_hand[-1] in gamers[humanIndex].calling:
+                print(f'Win by sumo from {gamers[humanIndex].playerID}')
+                print(f'{gamers[humanIndex].inner_hand[:-1]} || {gamers[humanIndex].outer_hand} || < {gamers[humanIndex].inner_hand[-1]} >')
+                return [gamers[humanIndex].playerID]
+
+            # Normal discard procedures
             print(gamers[humanIndex])
             playerDiscard:int = askdiscard(gamers[humanIndex].inner_hand)
             gamers[humanIndex].disc(playerDiscard, gameDiscards, publicDomain)
+
             # update calling list
             gamers[humanIndex].evalhand()
         else:
-            gamers[activePlayer].playturn(tileDeck, gameDiscards, publicDomain)
-            print(f'{gamers[activePlayer].playerID} discarded {gameDiscards[-1]}')
+            w = gamers[activePlayer].playturn(tileDeck, gameDiscards, publicDomain)
+            if w:
+                # print(f'{w} from {gamers[activePlayer].playerID}')
+                # print(f'{gamers[activePlayer].inner_hand[:-1]} || {gamers[activePlayer].outer_hand} || < {gamers[activePlayer].inner_hand[-1]} >')
+                return [gamers[activePlayer].playerID]
+            if printf:
+                print(f'{gamers[activePlayer].playerID} discarded {gameDiscards[-1]}')
 
         # loop ends here!
 
+    # print (f'{len(tileDeck)} tiles left in the mountain')
 
 
-        
+if __name__ == '__main__':
+    import ast
+    with open('winDict.txt') as db:
+        winnerDict_str = db.read()
+    
+    winnerDict: dict = ast.literal_eval(winnerDict_str)
+
+    for q in range(4000):
+        winners: list = spgame_loop(q, printf=False)
+                
+        for i in winners:
+            try:
+                winnerDict[i] += 1
+            # Build new profile if not present originally
+            except KeyError:
+                winnerDict[i] = 1
+
+        if q % 500 == 0:
+            print(f'On iteration {q}')
+
+    rewrite = open('winDict.txt', "w")
+
+    rewrite.write(str(winnerDict))
+
+    rewrite.close()
+    

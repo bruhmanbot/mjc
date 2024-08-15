@@ -1,7 +1,7 @@
 from usefulTiles import sortdict
 import sys
 import random
-sys.path.append('P:/mjc-main/mjcpy')
+sys.path.append('../mjcpy')
 
 from listUtils import * # type: ignore
 
@@ -56,8 +56,7 @@ def findOptimalDiscardLigu(inner_hand: list, knownPile: list):
 
 if __name__ == '__main__':
     from drawing_game import *
-    sys.path.append('P:/mjc-main/mjcpy')
-    from ligu_check import ligu_hand_validity_check # type: ignore  
+    from ligu_check import ligu_hand_validity_check # type: ignore
 
     tileDeck = deckInit()
     discard = []

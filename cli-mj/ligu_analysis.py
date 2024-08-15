@@ -1,9 +1,12 @@
 from drawing_game import *
 from liguStrats import *
 from hand_situation import *
-sys.path.append('P:/mjc-main/mjcpy')
+
+import sys
+sys.path.append('../mjcpy')
 from ligu_check import ligu_hand_validity_check # type: ignore  
 from listUtils import find_occurence # type: ignore
+
 import pandas as pd
 import time
 from multiprocessing import Pool

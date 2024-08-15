@@ -10,8 +10,8 @@ import pandas as pd
 from multiprocessing import Pool
 
 import sys
-sys.path.append('P:/mjc-main/mjcpy')
-from buddha_check import buddha_hand_validity_check # type: ignore
+sys.path.append('../mjcpy')
+from buddha_check import buddha_hand_validity_check # type:ignore
 
 
 
@@ -25,7 +25,7 @@ def simulate_game_bd(threshold=0, mode='large'):
 # Clear the list
     player1_hand.sort()
 
-    handScore, partial, singles = hand_eval(player1_hand, priority='str')
+    handScore, partial, singles = hand_eval(player1_hand, [],priority='str')
 
     if mode == 'large':
         if handScore <= threshold:
@@ -70,7 +70,7 @@ def simulate_game_bd(threshold=0, mode='large'):
 if __name__ == '__main__':
     import time
     
-    epochs = 20000
+    epochs = 22
 
     
     data = [0] * epochs
@@ -86,4 +86,4 @@ if __name__ == '__main__':
     delta2 = end2-start
     print(f'Multi mode finished in {delta2}s')
 
-    df.to_csv(r'P:/mjc-main/cli-mj/analysis_files/bd_calling.csv')
+    # df.to_csv(r'P:/mjc-main/cli-mj/analysis_files/bd_calling.csv')

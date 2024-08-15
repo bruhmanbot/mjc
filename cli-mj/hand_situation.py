@@ -1,7 +1,6 @@
-import sys
 import random
-sys.path.append('P:/mjc-main/mjcpy')
-
+import sys
+sys.path.append('../mjcpy')
 from listUtils import * # type: ignore
 
 def removelt(list1: list, threshold=40):

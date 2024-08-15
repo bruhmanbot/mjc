@@ -6,7 +6,7 @@ from drawing_game import *
 
 import random
 import sys
-sys.path.append('P:/mjc-main/mjcpy')
+sys.path.append('../mjcpy')
 
 from listUtils import * # type: ignore
 
@@ -14,7 +14,12 @@ def getRandomUselessTile(tileDict: dict) -> any:
     # Matches the tile info against the min and see if it is the most useless one
     # gets all the useless tiles and outputs a random one : Simulate human behaviour
     worst = []
-    minT = min(tileDict.values())
+    try: 
+        minT = min(tileDict.values())
+    except ValueError:
+        print(f'tileDict: {tileDict}')
+        print('Program exited in getRandomUselessTile')
+        quit()
     for t in tileDict:
         # tileDict[t] -> float e.g. 3.0
         if tileDict[t] == minT:
@@ -52,7 +57,10 @@ def findOptimalDiscard(inner_hand:list, knownPile:list, full_eval_mode=False, pr
     if len(psInfo.keys()) == 0:
         # no ps so should only be singles
         # if no ps and no singles --> already won
-        return getRandomUselessTile(ssInfo)
+        if type(getRandomUselessTile(ssInfo)) == int:
+            return getRandomUselessTile(ssInfo)
+        else:
+            return 'win??'
         # directly returns least useful tile
 
     # Following code executed if no errors

@@ -189,7 +189,13 @@ class gambler:
                 innerHandAfterUp.remove(pt)
                 outerHandAfterUp.append(pt)
             
-            nextDiscard: int = findOptimalDiscard(innerHandAfterUp, outerHandAfterUp, full_eval_mode=self.skill)
+            nextDiscard = findOptimalDiscard(innerHandAfterUp, outerHandAfterUp, full_eval_mode=self.skill)
+
+            if type(nextDiscard) == str:
+                print(self)
+                print('Exception happened at line 296 @ determine_UP')
+                quit()
+
             innerHandAfterUp.remove(nextDiscard)
             if self.skill:
                 eval_afterUp = hand_eval_adv(innerHandAfterUp, outerHandAfterUp)
@@ -294,6 +300,10 @@ class gambler:
         # Finding the best discard tile
 
         nextDiscard = findOptimalDiscard(innerHandAfterPong, known_pile, full_eval_mode=self.skill)
+        if type(nextDiscard) == str:
+            print(self)
+            print('Exception happened at line 296 @ determine_pong')
+            quit()
         innerHandAfterPong.remove(nextDiscard)
 
         if self.skill:

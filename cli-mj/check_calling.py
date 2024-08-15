@@ -1,5 +1,5 @@
 import sys
-sys.path.append('P:/mjc-main/mjcpy')
+sys.path.append('../mjcpy')
 
 from validityCheck import hand_validity_check # type: ignore
 from CounterA import std_hand_score_count # type: ignore
