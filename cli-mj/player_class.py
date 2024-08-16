@@ -5,7 +5,7 @@ from buddhastrats import buddha_findBestDiscard
 from hand_situation import hand_eval, hand_eval_adv
 from check_calling import *
 from usefulTiles import *
-
+import sys
 sys.path.append('../mjcpy')
 
 from listUtils import find_occurence # type: ignore
@@ -460,7 +460,8 @@ class gambler:
 if __name__ == '__main__':
     # Set up a test game
     # initialise the gamblers
-    me = gambler('me', 1)
+    me = gambler('a0__ME', {"skill": 1})
+    print(me.profile)
     deck = [41, 37]
     discards = [35, 42, 42, 42, 42]
     me.inner_hand = [11, 14, 17, 25, 28, 22, 36, 33, 39, 41, 41, 43, 44, 45, 46, 47]
