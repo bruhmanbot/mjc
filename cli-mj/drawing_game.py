@@ -40,7 +40,7 @@ def draw(pos:int , amount: int, deck: list):
         out_deck = deck[:-amount]
         return tilesDrawn, out_deck
     
-def gamedraw(deck:list):
+def gamedraw(deck:list) -> list[list]:
     # Main function to draw 1 tile until non flower tile is obtained
     tile, out_deck = draw(1, 1, deck)
     flowers = []
@@ -49,6 +49,12 @@ def gamedraw(deck:list):
         flowers.append(tile[0])
         tile.pop()
         tile, out_deck = draw(-1, 1, out_deck)
+
+        try:
+            tile[0]
+        except IndexError:
+            # No more tiles
+            return ['DRAW'], [], []
 
     # breaks when obtains non flower tile
     return tile, flowers, out_deck

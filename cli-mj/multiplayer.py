@@ -1,6 +1,8 @@
 from drawing_game import deckInit, askdiscard
 from player_class import gambler
-import random
+
+import pandas as pd
+from multiprocessing import Pool
 
 def update_public_domain(*gamers: gambler) -> list:
     global discards
@@ -25,16 +27,17 @@ def nextplayerindex(current_index:int):
 def spgame_loop(first_player:int=0, printf=True):
     # gamers
     gamers = [0 ,0, 0, 0]
-    gamers[0] = gambler('me2', 1)
-    gamers[1] = gambler('ai_1', 1)
+    gamers[0] = gambler('ai_0', 0)
+    gamers[1] = gambler('ai_1', 0)
     gamers[2] = gambler('ai_2', 0)
-    gamers[3] = gambler('ai_3', 1)
+    gamers[3] = gambler('ai_3', 0)
 
     # init deck and give everyone tiles in order
-    tileDeck = deckInit(flowers=False)
+    tileDeck = deckInit(flowers=True)
     for g in gamers:
         g.init_draw(tileDeck)
         g.evalhand()
+        g.determine_goal()
         
     # main body loop of play
     activePlayer:int = first_player % 4 # index of the current active player, starting off with 0
@@ -57,13 +60,17 @@ def spgame_loop(first_player:int=0, printf=True):
     while True:
         lastTile = gameDiscards[-1]
         # Evaluating if anyone wins
-        winners = []
+        winners: list[tuple] = []
         for g in gamers:
             # that gamer was calling on that tile
             if lastTile in g.calling:
                 # print(f'{g.playerID} has won on {lastTile} discarded by {gamers[activePlayer].playerID}; with hand:')
                 # print(f'{g.inner_hand} || {g.outer_hand} || < {lastTile} >')
-                winners.append(g.playerID)
+                # Run the score count with the last tile
+                gResult: list = g.score_count(lastTile)
+                gResult = tuple([g.playerID] + [gamers[activePlayer].playerID] + [80-len(tileDeck)] + gResult + 
+                                [f'{g.inner_hand} || {g.outer_hand} || < {lastTile} >'])
+                winners.append(gResult)
 
         # Breaks the whole loop (and function if someone wins) // draw        
         if len(winners):
@@ -72,7 +79,7 @@ def spgame_loop(first_player:int=0, printf=True):
 
         if len(tileDeck) == 0:
             # print('Game ended in draw')
-            return ['Draw']
+            return [tuple(['draw'] * 6)]
 
         # Evaluate for pongs
         pongPlayerIndex = -1 # later will be changed to positive integer if someone pongs
@@ -188,12 +195,15 @@ def spgame_loop(first_player:int=0, printf=True):
             
         # Normal drawing
         if activePlayer == humanIndex:
+            potentialTile = tileDeck[0]
             gamers[humanIndex].draw(tileDeck)
             # Check for win by sumo
             if gamers[humanIndex].inner_hand[-1] in gamers[humanIndex].calling:
                 print(f'Win by sumo from {gamers[humanIndex].playerID}')
                 print(f'{gamers[humanIndex].inner_hand[:-1]} || {gamers[humanIndex].outer_hand} || < {gamers[humanIndex].inner_hand[-1]} >')
-                return [gamers[humanIndex].playerID]
+                tsumoOutput: tuple = tuple([gamers[humanIndex].playerID, gamers[humanIndex].playerID, 80-len(tileDeck)] + winDialog + 
+                                           [f'{gamers[humanIndex].inner_hand[:-1]} || {gamers[humanIndex].outer_hand} || < {potentialTile} >'])
+                return [tsumoOutput]
 
             # Normal discard procedures
             print(gamers[humanIndex])
@@ -203,11 +213,15 @@ def spgame_loop(first_player:int=0, printf=True):
             # update calling list
             gamers[humanIndex].evalhand()
         else:
-            w = gamers[activePlayer].playturn(tileDeck, gameDiscards, publicDomain)
-            if w:
+            potentialTile = tileDeck[0]
+            winDialog: list = gamers[activePlayer].playturn(tileDeck, gameDiscards, publicDomain)
+            if len(winDialog):
                 # print(f'{w} from {gamers[activePlayer].playerID}')
                 # print(f'{gamers[activePlayer].inner_hand[:-1]} || {gamers[activePlayer].outer_hand} || < {gamers[activePlayer].inner_hand[-1]} >')
-                return [gamers[activePlayer].playerID]
+                # Standardise the output
+                tsumoOutput: tuple = tuple([gamers[activePlayer].playerID, gamers[activePlayer].playerID, 80-len(tileDeck)] + winDialog + 
+                                           [f'{gamers[activePlayer].inner_hand} || {gamers[activePlayer].outer_hand} || < {potentialTile} >'])
+                return [tsumoOutput]
             if printf:
                 print(f'{gamers[activePlayer].playerID} discarded {gameDiscards[-1]}')
 
@@ -217,28 +231,44 @@ def spgame_loop(first_player:int=0, printf=True):
 
 
 if __name__ == '__main__':
-    import ast
-    with open('winDict.txt') as db:
-        winnerDict_str = db.read()
+    # import ast
+    # with open('winDict.txt') as db:
+    #     winnerDict_str = db.read()
     
-    winnerDict: dict = ast.literal_eval(winnerDict_str)
+    # winnerDict: dict = ast.literal_eval(winnerDict_str)
+    games = 60000
+    gd_args = [(i, False) for i in range(games)]
 
-    for q in range(4000):
-        winners: list = spgame_loop(q, printf=False)
+    poo = Pool(processes=4)
+
+    print('Multi Processing started ~~')
+    gdData = poo.starmap(spgame_loop, gd_args)
+
+    gdData_fixed = []
+    for row in gdData:
+        for subtuple in row:
+            gdData_fixed.append(subtuple)
+
+    gd_df = pd.DataFrame(gdData_fixed, columns=['Winner', 'From', 'TilesUsed', 'Score', 'Accolades', 'Hand'])
+
+    print(gd_df.describe())
+    gd_df.to_csv('./analysis_files/fullgame40k.csv')
+    # for q in range(4000):
+    #     winners: list = spgame_loop(q, printf=False)
                 
-        for i in winners:
-            try:
-                winnerDict[i] += 1
-            # Build new profile if not present originally
-            except KeyError:
-                winnerDict[i] = 1
+    #     for i in winners:
+    #         try:
+    #             winnerDict[i] += 1
+    #         # Build new profile if not present originally
+    #         except KeyError:
+    #             winnerDict[i] = 1
 
-        if q % 500 == 0:
-            print(f'On iteration {q}')
+    #     if q % 500 == 0:
+    #         print(f'On iteration {q}')
 
-    rewrite = open('winDict.txt', "w")
+    # rewrite = open('winDict.txt', "w")
 
-    rewrite.write(str(winnerDict))
+    # rewrite.write(str(winnerDict))
 
-    rewrite.close()
+    # rewrite.close()
     

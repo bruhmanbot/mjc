@@ -6,21 +6,76 @@ from hand_situation import hand_eval, hand_eval_adv
 from check_calling import *
 from usefulTiles import *
 
+sys.path.append('../mjcpy')
+
+from listUtils import find_occurence # type: ignore
+from MJCounter import mj_scorecount # type: ignore
 
 class gambler:
 
-    def __init__(self, id_input, skill_level:int) -> None:
+    def __init__(self, id_input, player_profile:dict =None) -> None:
         # start up the variables that we will use
         
         self.inner_hand: list[int] = []
         self.outer_hand: list[int] = []
         self.flowers: list[int] = []
         self.partial_sets: list[list] = []
-        self.hand_score: float = 0.0
+        self.hand_score: float = -1.0
         # calling: list of tiles that win!
         self.calling: list[int] = []
         self.playerID: str = id_input
-        self.skill: bool = bool(skill_level)
+        # Construct player profile (configure playstyle)
+        # Below is the deault profile (as an example)
+        self.profile = {
+            "skill": 0, # Must be an integer (for now)
+            
+            # dictionary to represent {startingPairs: Max Starting Score to proceed}
+            # Note that generally for high scoring hands it is better to go for the normal route --> Specify the max that the bot
+            # will sacrifice speed for ligu. Of course if you want a bot that goes for ligu 100%, set the max to like -1.
+            # If score is not listed --> Go for normal hand
+            "liguThreshold": {
+                0: -1, # Never go for ligu
+                1: 0.5, # Go for ligu if only 1 pair (but realistically for this situation you should go for buddha anyways)
+                2: -1, # No favourable situation
+                3: -1,
+                4: 2.75,
+                5: 4.5,
+                6: 6.25,
+                7: 10, # Always go for ligu
+                8: 14,
+            },
+
+            # Same thing as above but for buddha {startingLT: MaxScore to proceed}
+            "bdThreshold": {
+                0: -1, # literally why would you go for it
+                1: -1,
+                2: -1,
+                3: -1,
+                4: -1,
+                5: 1.75,
+                6: 2.75,
+                7: 4 # I mean come on of course you are going to go for it under most cases
+            },
+
+            # Default goal for hand
+            "goal": "normal"
+
+        }
+
+        # Overwrite self.profile if entered something
+        try:
+            player_profile.values()
+            for q in player_profile:
+                self.profile[q] = player_profile[q]
+
+        except AttributeError:
+            pass
+
+
+        # Backwards compatibility with code below, will update later
+        self.skill: bool = bool(self.profile["skill"])
+
+        
 
 
     def __str__(self) -> str:
@@ -49,16 +104,19 @@ class gambler:
         # update the outer deck
         deck[:] = out_deck
 
+        
+
         return
     
     def evalhand(self) -> None:
         # Differentiate the modes --> Save time if full_mode is not ran
-        if self.skill:
+        if self.profile["skill"]:
             self.hand_score, self.partial_sets, temp = hand_eval_adv(self.inner_hand, self.outer_hand)
         else:
             self.hand_score, self.partial_sets, temp = hand_eval(self.inner_hand, self.outer_hand, priority='str')
-
+        
         # Update calling tiles:
+        self.calling = []
         if self.hand_score >= 7.5:
             callers = check_calling_tiles(self.inner_hand, self.outer_hand, output_score=False)
             self.calling = list(callers.keys())
@@ -74,9 +132,49 @@ class gambler:
 
         return
 
+    def determine_goal(self) -> None:
+        # Determines the goal for the player
+        if len(self.inner_hand) == 0:
+            return "Failed to determine starting goal: Did you initialise the draw?"
+        elif self.hand_score == -1.0:
+            return "Failed to determine starting goal: Did you evaluate your hand?\n call {object}.evalhand() before running this function"
+        
+        # By default the goal is "normal" see self.profile dictionary default values
+        if len(self.outer_hand) > 0:
+            self.profile["goal"] = "normal"
+            return
+        
+        startingLT = list(filter(lambda x: x>40, self.inner_hand))
+        numStartingLT:int = len(set(startingLT))
+
+        if self.hand_score <= self.profile["bdThreshold"][numStartingLT]:
+            self.profile["goal"] = "buddha"
+            return
+        
+        init_pairs = find_occurence(self.inner_hand, 2)
+        init_trips = find_occurence(self.inner_hand, 3)
+        init_quads = find_occurence(self.inner_hand, 4)
+        init_pc: int = len(init_pairs) + len(init_trips) + 2*len(init_quads)
+
+        # Check if hand score is smaller or equal to MAX threshold laid out
+        if self.hand_score <= self.profile["liguThreshold"][init_pc]:
+            self.profile["goal"] = "ligu"
+            return
+        
+    def checkLT_availability(self, known_pile:list) -> None:
+        # Checks if any LT is dead (all 4 gonzo)
+        for i in range(41,48):
+            if known_pile.count(i) == 4:
+                self.profile["goal"] = "normal"
+                break
+        
+        return
+
     def draw(self, deck:list) -> None:
         # Draws from the deck
         self.inner_hand, self.flowers, out_deck = playerdraw(self.inner_hand, self.flowers, deck)
+        # playerdraw adds a string if deck runs of tiles
+
         self.flowers.sort()
         # update the outer deck
         deck[:] = out_deck
@@ -89,10 +187,16 @@ class gambler:
         self.inner_hand.sort()
         return
     
-    def playturn(self, deck: list, discard:list, known_pile:list, hand_goal='normal') -> str:
+    def playturn(self, deck: list, discard:list, known_pile:list) -> list:
         # Plays the turn of the player
         # Draws a tile from the deck first
         self.draw(deck)
+
+        if type(self.inner_hand[-1]) == str:
+            # Last tile of inner_hand is 'DRAW' (str) if the deck runs out of tiles
+            # Exception occured with no tiles remaining
+            return []
+            # Forces the game to proceed to next round and exit via draw
         # Player hand and flowers are automatically updated
         # known pile updated here as well
 
@@ -100,9 +204,17 @@ class gambler:
 
         # see if won
         if self.inner_hand[-1] in self.calling:
-            return 'winners! by sumo!'
+            winningTile = self.inner_hand[-1]
+            self.inner_hand.pop(-1)
+            
+            return self.score_count(winningTile, self_drawn=1)
 
-        match hand_goal:
+        if self.profile["goal"] == "buddha":
+            # Set goal to normal is buddha is no longer possible
+            self.checkLT_availability(known_pile)
+            
+        # Model depends on the goal
+        match self.profile["goal"]:
             case 'normal':
                 discardTile = findOptimalDiscard(self.inner_hand, known_pile + self.inner_hand, full_eval_mode=self.skill)
             case 'buddha':
@@ -118,8 +230,8 @@ class gambler:
 
         # Re-eval hand
         self.evalhand()
-        # Return empty string if not won
-        return ''
+        # Return empty list if not won
+        return []
 
     
     def up(self, partial:list[int], discard:list, known_pile:list) -> None:
@@ -128,6 +240,7 @@ class gambler:
         fullSet.sort()
         # pop from the discard to simulate what actually happens in the middle
         discard.pop(-1)
+        known_pile.pop(-1)
         # Adds the full set to the outer hand
         self.outer_hand[:] = self.outer_hand + fullSet
         
@@ -152,6 +265,8 @@ class gambler:
         return
     
     def determine_up(self, discard:list, known_pile:list) -> list:
+        if self.profile["goal"] != "normal":
+            return []
         # Returns the best possible partial set to up with
         # possible partial sets, partial sets which need to be a subset 
         # in order for upping to be possible
@@ -280,6 +395,8 @@ class gambler:
         return
     
     def determine_pong(self, discard:list, known_pile:list) -> list:
+        if self.profile["goal"] != "normal":
+            return []
         # Returns whether you should ponggers
         # Flow: See if can pong --> See if score increases after pong + discard
         # Pong tile in question
@@ -330,6 +447,13 @@ class gambler:
                     known_pile.append(tile)
                 # Add the final time
                 known_pile.append(tile)
+        return
+                
+    def score_count(self, winningTile, self_drawn=0) -> list:
+        # Returns the scores and accolades
+        scoreResult = mj_scorecount([winningTile], self.outer_hand, self.inner_hand, self_drawn, 1, 1, self.flowers)
+        return list(scoreResult)
+
 
 
 
@@ -337,12 +461,16 @@ if __name__ == '__main__':
     # Set up a test game
     # initialise the gamblers
     me = gambler('me', 1)
-
-    me.inner_hand = [11, 11, 11, 12, 13, 17, 18, 19, 21, 22, 23, 28, 28, 32, 33, 34]
+    deck = [41, 37]
+    discards = [35, 42, 42, 42, 42]
+    me.inner_hand = [11, 14, 17, 25, 28, 22, 36, 33, 39, 41, 41, 43, 44, 45, 46, 47]
     me.outer_hand = []
 
     me.evalhand()
+    me.determine_goal()
 
-    print(me.calling)
+    me.playturn(deck, discards, discards)
 
+    print(me)
+    print(discards)
 
