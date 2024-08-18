@@ -27,9 +27,10 @@ def mj_scorecount(WinningTile: list, WinningHandOuter: list, WinningHandInner: l
     # Seat = 4  # 1 for Dealer
 
     funcResult = []  # Priming output list
+    WinningHandOuter2 = WinningHandOuter.copy()
 
     # Checking type and length
-    WinningHandTotal = WinningTile + WinningHandOuter + WinningHandInner
+    WinningHandTotal = WinningTile + WinningHandOuter2 + WinningHandInner
     if listtypecheck(WinningHandTotal, int) != 1 or len(WinningHandTotal) != 17:
         funcResult.append("Invalid Hand")
         funcResult.append("~")
@@ -38,15 +39,15 @@ def mj_scorecount(WinningTile: list, WinningHandOuter: list, WinningHandInner: l
     # Running validity tests
     # Standard Hands
     WinningHandValid, InnerStraights, OuterStraights, InnerTriplets, OuterTriplets, EyePair = (
-        hand_validity_check(WinningHandInner, WinningHandOuter, WinningTile))
+        hand_validity_check(WinningHandInner, WinningHandOuter2, WinningTile))
 
     # LiguLigu
-    WinningHandLigu = ligu_hand_validity_check(WinningHandInner, WinningHandOuter, WinningTile)
+    WinningHandLigu = ligu_hand_validity_check(WinningHandInner, WinningHandOuter2, WinningTile)
 
     # Buddha // 13 Orphans
     # The two results variables will be renamed again once we have established the identity of our hand
     WinningHandBuddha, BuddhaRes1, BuddhaRes2, BuddhaRes3 = buddha_hand_validity_check(WinningHandInner,
-                                                                                       WinningHandOuter, WinningTile)
+                                                                                       WinningHandOuter2, WinningTile)
 
     # Cheating Hand
     if WinningHandBuddha + WinningHandValid + WinningHandLigu == 0:
@@ -111,19 +112,24 @@ def mj_scorecount(WinningTile: list, WinningHandOuter: list, WinningHandInner: l
         funcResult.append(ScoreB)
         funcResult.append(AccoladesB)
 
+    # Combine the scores and accolades if double eat (ligu + normal)
+    if len(funcResult) == 4:
+        funcResult2: list = [funcResult[0] + funcResult[2], funcResult[1] + funcResult[3]]
+        # funcResult2 : [totalScore, totalAccolades]
+        return funcResult2
     return funcResult
 
 
 if __name__ == '__main__':
     # Enter the winning hand (Winning tile)
-    WTile = [45]
+    WTile = [16]
 
     # Enter the winning hand (outer tiles) IN ORDER!
     WOuter = []
 
     # Enter the winning hand (inner tiles)
-    WInner = [11, 14,17, 22, 25, 28, 39,36,33, 41, 42, 43, 44, 45, 46, 47]
+    WInner = [13, 14, 15, 16, 21, 22, 23, 24, 25, 26, 32, 33, 34, 34, 35, 36]
 
-    dialog = mj_scorecount(WTile, WOuter, WInner, 0, 1, 1, [1,2,3,4])
+    dialog = mj_scorecount(WTile, WOuter, WInner, 0, 1, 1, [])
 
     print(dialog)

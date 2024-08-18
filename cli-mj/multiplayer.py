@@ -14,7 +14,7 @@ def update_public_domain(*gamers: gambler) -> list:
             g.playerID == 'TEST'
         except AttributeError:
             print('ERROR @ UPDATE PUBLIC DOMAIN: NOT ALL ARGUMENTS PASSED TO FUNCTION ARE GAMBLERS')
-            return
+            return []
         new_domain = new_domain + g.outer_hand
 
     return new_domain
@@ -30,10 +30,10 @@ def nextplayerindex(current_index: int):
 def spgame_loop(first_player: int = 0, printf=True):
     # gamers
     gamers = [0, 0, 0, 0]
-    gamers[0] = gambler('a0__ME', {"skill": 1})
-    gamers[1] = gambler('ai_1', 0)
-    gamers[2] = gambler('ai_2', 0)
-    gamers[3] = gambler('ai_3', 0)
+    gamers[0] = gambler('a0__ME')
+    gamers[1] = gambler('ai_1')
+    gamers[2] = gambler('ai_2')
+    gamers[3] = gambler('ai_3')
 
     # init deck and give everyone tiles in order
     tileDeck = deckInit(flowers=True)
@@ -45,7 +45,7 @@ def spgame_loop(first_player: int = 0, printf=True):
     # main body loop of play
     activePlayer: int = first_player % 4  # index of the current active player, starting off with 0
     humanIndex: int = -1
-    gameDiscards = []
+    gameDiscards = [0]
     # public domain should be continuously updated
     publicDomain = []
 
@@ -69,9 +69,10 @@ def spgame_loop(first_player: int = 0, printf=True):
                 # print(f'{g.playerID} has won on {lastTile} discarded by {gamers[activePlayer].playerID}; with hand:')
                 # print(f'{g.inner_hand} || {g.outer_hand} || < {lastTile} >')
                 # Run the score count with the last tile
-                gResult: list = g.score_count(lastTile)
-                gResult = tuple([g.playerID] + [gamers[activePlayer].playerID] + [80 - len(tileDeck)] + gResult +
-                                [f'{g.inner_hand} || {g.outer_hand} || < {lastTile} >'])
+                gResult = g.score_count(lastTile)
+                gResult = tuple([g.playerID, gamers[activePlayer].playerID] + [80 - len(tileDeck)] + gResult +
+                                [f'{g.inner_hand} || {g.outer_hand} || < {lastTile} >'] +
+                                [lastTile, publicDomain.count(lastTile)])
                 winners.append(gResult)
 
         # Breaks the whole loop (and function if someone wins) // draw        
@@ -81,7 +82,7 @@ def spgame_loop(first_player: int = 0, printf=True):
 
         if len(tileDeck) == 0:
             # print('Game ended in draw')
-            return [tuple(['draw'] * 6)]
+            return [tuple(['draw'] * 8)]
 
         # Evaluate for pongs
         pongPlayerIndex = -1  # later will be changed to positive integer if someone pongs
@@ -139,8 +140,7 @@ def spgame_loop(first_player: int = 0, printf=True):
                 # The up function will already ask the user for a discard if applicable
                 gamers[activePlayer].up(nextPlayerUpPS, gameDiscards, publicDomain)
                 if printf:
-                    print(
-                        f'{gamers[activePlayer].playerID} UPPED {lastTile} discarded by {gamers[activePlayer - 1].playerID}')
+                    print(f'{gamers[activePlayer].playerID} UPPED {lastTile} discarded by {gamers[activePlayer - 1].playerID}')
                     print(f'{gamers[activePlayer].playerID} displayed tiles: {gamers[activePlayer].outer_hand}')
                     print(f'{gamers[activePlayer].playerID} discarded {gameDiscards[-1]}')
                 continue
@@ -169,8 +169,6 @@ def spgame_loop(first_player: int = 0, printf=True):
 
             ...
             # Need extra code here to tell players exactly how they can UP
-
-
         elif len(nextPlayerPONG):
             if activePlayer != humanIndex:
                 # The up function will already ask the user for a discard if applicable
@@ -218,6 +216,12 @@ def spgame_loop(first_player: int = 0, printf=True):
             gamers[humanIndex].evalhand()
         else:
             potentialTile = tileDeck[0]
+            count_fromEnd = 1
+            # Handles the exception with the first tile being a flower
+            while potentialTile < 10 and count_fromEnd < len(tileDeck):
+                potentialTile = tileDeck[-1 * count_fromEnd]
+                count_fromEnd = count_fromEnd + 1
+
             winDialog: list = gamers[activePlayer].playturn(tileDeck, gameDiscards, publicDomain)
             if len(winDialog):
                 # print(f'{w} from {gamers[activePlayer].playerID}')
@@ -225,7 +229,8 @@ def spgame_loop(first_player: int = 0, printf=True):
                 # Standardise the output
                 tsumoOutput: tuple = tuple(
                     [gamers[activePlayer].playerID, gamers[activePlayer].playerID, 80 - len(tileDeck)] + winDialog +
-                    [f'{gamers[activePlayer].inner_hand} || {gamers[activePlayer].outer_hand} || < {potentialTile} >'])
+                    [f'{gamers[activePlayer].inner_hand} || {gamers[activePlayer].outer_hand} || < {potentialTile} >']
+                    + [potentialTile] + [publicDomain.count(potentialTile)])
                 return [tsumoOutput]
             if printf:
                 print(f'{gamers[activePlayer].playerID} discarded {gameDiscards[-1]}')
@@ -236,16 +241,18 @@ def spgame_loop(first_player: int = 0, printf=True):
 
 
 if __name__ == '__main__':
+    import time
     # import ast
     # with open('winDict.txt') as db:
     #     winnerDict_str = db.read()
 
     # winnerDict: dict = ast.literal_eval(winnerDict_str)
-    games = 6000
+    games = 160000
     gd_args = [(i, False) for i in range(games)]
 
-    poo = Pool(processes=4)
+    poo = Pool(processes=6)
 
+    start = time.time()
     print('Multi Processing started ~~')
     gdData = poo.starmap(spgame_loop, gd_args)
 
@@ -254,10 +261,12 @@ if __name__ == '__main__':
         for subtuple in row:
             gdData_fixed.append(subtuple)
 
-    gd_df = pd.DataFrame(gdData_fixed)
+    df_col = ['Win', 'From', 'TilesUsed', 'Score', 'Accolades', 'Hand', 'wTile', 'count_WTile']
+    gd_df = pd.DataFrame(gdData_fixed, columns=df_col)
 
     print(gd_df.describe())
-    gd_df.to_csv('./full-game.csv')
+    print(f'time taken: {time.time() - start}')
+    gd_df.to_csv(r'C:/Users/Asus/Documents/coding projects/mj-tw-analysis/analysis_files/analysis_files_lib12/fullgame-160k-highlvl.csv')
     # for q in range(4000):
     #     winners: list = spgame_loop(q, printf=False)
 

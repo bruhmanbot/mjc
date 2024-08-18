@@ -367,7 +367,7 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                     # Utilising the fact that total straights and total straights unit does not change any indices
                     func_kan.append(TotalStraights[j])
 
-                add_accolade(35, func_kan)
+                add_accolade(35, func_kan, inverse_kan=False)
                 Count_SuitedStraights = 0
             case 5:
                 OS_repeated_straight = find_occurence(TotalStraights_Unit, 5)
@@ -382,7 +382,7 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                     # Utilising the fact that total straights and total straights unit does not change any indices
                     func_kan.append(TotalStraights[j])
 
-                add_accolade(36, func_kan)
+                add_accolade(36, func_kan, inverse_kan=False)
                 Count_SuitedStraights = 0
             case 3:
                 # Only one case where occurrence = 3 (no double 3 相逢)
@@ -399,13 +399,17 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                     # Utilising the fact that total straights and total straights unit does not change any indices
                     func_kan.append(tuple(TotalStraights[j]))
 
+                func_kan_arg: list[list] = []
+                for q in func_kan:
+                    func_kan_arg.append(list(q))
+
                 if len(set(func_kan)) == 3:  # If all items are unique. length of the set(func_kan) == 3
-                    add_accolade(34, func_kan)
+                    add_accolade(34, func_kan_arg, inverse_kan=False)
                 # A more complicated system is needed here to avoid counting 2 suited straights + 1 off suit
                 # straight
                 elif len(set(func_kan)) > 1:
                     # Only considering the two unique straights
-                    add_accolade(33, list(set(func_kan)))
+                    add_accolade(33, func_kan_arg, inverse_kan=True)
                 # The above corresponds to the case of 2 suited + 1 off suit
             case 2:
                 if doCheck_2:
@@ -430,7 +434,11 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
 
                         if len(set(func_kan)) != 1:  # Off-suit case
                             # Pretty sure this is the only accolade i need to do this for
-                            add_accolade(33, func_kan, inverse_kan=True)
+                            func_kan_arg: list[list] = []
+
+                            for q in func_kan:
+                                func_kan_arg.append(list(q))
+                            add_accolade(33, func_kan_arg, inverse_kan=True)
 
     if Count_SuitedStraights == 1:
         RepeatedStraights_CountList = unique_occurence_count(TotalStraights)
@@ -452,24 +460,22 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                         # can directly add to func_kan
                         # Also since it is repeating, one kan is enough
                         func_kan = list(straight)
-
                         # Check if any 1 of the straight is outside --> normal
-                        # Normal mode is sufficient
-                        add_accolade(37, func_kan)
+                        add_accolade(37, func_kan, inverse_kan=True)
 
                 doCheck_2 = False
             case 3:
                 suited_straights = find_occurence(TotalStraights, 3)
                 # Finds the straight which has repeated 3 times
                 # should only be 1 such straight at max (suited_straights is list of length 1)
-                add_accolade(38, suited_straights[0])
+                add_accolade(38, suited_straights[0], inverse_kan=True)
                 # Normal type check suffices here (if none of the 3 are outside == all 3 are inside)
 
             case 4:
                 suited_straights = find_occurence(TotalStraights, 4)
                 # Finds the straight which has repeated 4 times
                 # should only be 1 such straight at max (suited_straights is list of length 1)
-                add_accolade(39, suited_straights[0])
+                add_accolade(39, suited_straights[0], inverse_kan=True)
                 # Normal type check suffices here (if none of the 4 are outside == all 3 are inside)
 
     # Bu Bu Gao 步步高 (BBG)
@@ -643,11 +649,13 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
     for q in QuadTiles:
         func_kan = []
         KanAppearance = 0
+
         for i in TotalKans:  # Searches through each kan to see how kans q is contained in
             if q in i:
                 KanAppearance = KanAppearance + 1
                 # Prepping func_kan again
                 func_kan.append(i)
+
         # if 2 kan, that should be a triplet + a straight--> 4 in 1
         # or 2 straight + eyePair --> 4 in 2
         # 3 kan is impossible
@@ -664,7 +672,7 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                 else:  # 4 in 1
                     add_accolade(54, func_kan)
             case 4:  # 4 in 4
-                add_accolade(55, func_kan)
+                add_accolade(56, func_kan)
             case _:
                 # This part technically is not required since there shouldn't be a case where this occurs?
                 continue
@@ -760,7 +768,7 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
     YaojiuPresent = 0
 
     for i in WinningHandTotal:
-        if i % 10 == (1 or 9) or i > 40:
+        if i % 10 in [1,9] or i > 40:
             YaojiuPresent = 2
             break
 
@@ -770,6 +778,9 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
 
     # Mixed Yaojiu (Pure and non-Pure) + Pure Yaojiu
     # The following for loop checks if there is a 1/9 in every non-lucky tile kan
+    # Check for eye pair first though
+    if (EyePair[0] % 10 not in [1, 9]) and EyePair[0] < 40:
+        YaojiuPresent = 0
 
     for i in TotalKans:
         if YaojiuPresent == 0:

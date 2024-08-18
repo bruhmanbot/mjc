@@ -147,7 +147,7 @@ if __name__ == '__main__':
 
     singles = [41, 44]
 
-    j = sortdict(usefulness_ps(partial, known))
-
-    k = sortdict(usefulness_ss(singles, known))
+    j = usefulness_ps(partial, known)
+    print(j)
+    k = usefulness_ss(singles, known)
     print(k)

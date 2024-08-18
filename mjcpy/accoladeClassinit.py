@@ -1,5 +1,6 @@
 from accoladeClass import Acco
 import pandas as pd
+import sys
 
 
 def accoladecsv_init(path='tw_accolades_info.csv') -> list:
