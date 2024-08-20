@@ -210,7 +210,7 @@ def straight_dissect_recur(inner_hand:list) -> list:
 
     return combinations_uniq
 
-def hand_eval_adv(inner_hand: list, outer_hand: list) -> object:
+def hand_eval_adv(inner_hand: list, outer_hand: list, all_hands=False) -> object:
     combinationsLib: list = straight_dissect_recur(inner_hand=inner_hand)
     combinationsTierDB: dict = {}
     # Generate the possible combinations in a library
@@ -263,6 +263,13 @@ def hand_eval_adv(inner_hand: list, outer_hand: list) -> object:
         elif combinationsTierDB[c_i][0] == best_combs_score:
             best_combs.append(c_i)
 
+    if all_hands:
+        output = []
+        for q in best_combs:
+            output.append(combinationsTierDB[q])
+
+        return output
+    
     # Ideally we wouldn't need random here but I will include this to eliminate potential bias
     chosen_comb:int = random.choice(best_combs)
 
@@ -279,7 +286,7 @@ def hand_eval_adv(inner_hand: list, outer_hand: list) -> object:
 
 if __name__ == '__main__':
     import time # timing function runtime
-    hand = [12, 12, 12, 13, 14, 15, 27]
+    hand = [11, 12, 13, 14, 15, 16, 17]
 
     hand.sort()
     ## SIMPLE MODE

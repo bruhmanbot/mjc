@@ -1,8 +1,10 @@
+from optimalDiscard_defense import handValueAfterdiscard
+from optimalDiscard import findOptimalDiscard
 import sys
 sys.path.append('../mjcpy')
 import random
 
-from validityCheck import * # type: ignore
+from validityCheck import * # type: ignore  # noqa: F403
 
 def deckInit(flowers=False):
     # Create a deck of the 144 tiles
@@ -108,6 +110,7 @@ def mainloop():
     # Clear the list
     player1_drawnTiles = []
     player1_hand.sort()
+    disc = []
 
     while True:
         # Print tiles remaining in the sea
@@ -119,7 +122,7 @@ def mainloop():
         print (f'Flowers obtained: {player1_flowers}')
 
         # Run validity check to see if winners?
-        validityRes = hand_validity_check(player1_hand[:-1], [], player1_hand[-1:]) # type: ignore
+        validityRes = hand_validity_check(player1_hand[:-1], [], player1_hand[-1:]) # type: ignore  # noqa: F405
 
         if validityRes[0] == 1:
             print ('we did it!')
@@ -129,8 +132,16 @@ def mainloop():
             print('we are getting there')
 
         # Ask discard tile
-        dcTile = askdiscard(player1_hand)
+        for q in set(player1_hand):
+            v = handValueAfterdiscard(player1_hand, [], q, disc + player1_hand)
+            print(q,v)
+        
+        old_suggestion = findOptimalDiscard(player1_hand, disc, True)
+        print(f'suggestion from old {old_suggestion}')
 
+
+        dcTile = askdiscard(player1_hand)
+        disc.append(int(dcTile))
         player1_hand.remove(int(dcTile))
 
         player1_hand.sort()
