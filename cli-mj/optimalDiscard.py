@@ -2,7 +2,7 @@
 
 from usefulTiles import usefulness_ps, usefulness_ss
 from hand_situation import *
-from drawing_game import *
+# from drawing_game import *
 
 import random
 import sys
@@ -57,7 +57,7 @@ def findOptimalDiscard(inner_hand:list, knownPile:list, full_eval_mode=False, pr
     if len(psInfo.keys()) == 0:
         # no ps so should only be singles
         # if no ps and no singles --> already won
-        if type(getRandomUselessTile(ssInfo)) == int:
+        if type(getRandomUselessTile(ssInfo)) is int:
             return getRandomUselessTile(ssInfo)
         else:
             return 'win??'

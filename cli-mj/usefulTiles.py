@@ -90,7 +90,7 @@ def usefulness_ps(partialSets: list, knownPile: list):
 
     # Pairs
     for ps in partialSets[1]:
-        outputdict[tuple(ps)] = (4 - knownPile.count(ps[0])) * 16 # 16 factor due to pongs
+        outputdict[tuple(ps)] = (4 - knownPile.count(ps[0])) * 2 # 2 factor due to pongs
         # Pairs are rarely discarded so long as they are alive
 
     # kalongs

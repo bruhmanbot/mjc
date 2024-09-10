@@ -84,7 +84,7 @@ def listsXOR(list1:list, list2:list, remove_all=True):
     return list1w
 
 
-def buddha_findBestDiscard(inner_hand:list, knownPile: list):
+def buddha_findBestDiscard(inner_hand:list, knownPile: list, return_all=False) -> any:
     ## Assuming that we are aiming for a buddha hand --> outputs a tile that u should throw away
     # Priority: Throw away triplets/quads --> Throw away excess tiles in suits (if possible) --> Throw away excess pairs
     # e.g. if [5,6,9] throw away 5 s.t. [6,9] allows for the most tiles to get an unrelated set [1/2/3,6,9]
@@ -96,6 +96,9 @@ def buddha_findBestDiscard(inner_hand:list, knownPile: list):
 
     # Return random excess tile if it exist    
     if len(excessTiles):
+
+        if return_all:
+            return excessTiles
         return random.choice(excessTiles)
     
     suits_splitted = split_suits(inner_hand)
@@ -120,6 +123,8 @@ def buddha_findBestDiscard(inner_hand:list, knownPile: list):
         excessTiles = excessTiles + listsXOR(suits_splitted[ind], s)
 
     if len(excessTiles):
+        if return_all:
+            return excessTiles
         # Return random excess tile here
         return random.choice(excessTiles)
     
@@ -135,30 +140,82 @@ def buddha_findBestDiscard(inner_hand:list, knownPile: list):
         if len(q) <= 1:
             continue
         # Skips all single lists or empty lists
-        if index_q % 3 == 0:
+        elif index_q % 3 == 0:
             # Low range
             excessTiles.append(max(q))
-        if index_q % 3 == 2:
+            continue
+            
+        elif index_q % 3 == 2:
             # High range
             excessTiles.append(min(q))
-        else:
-            # Mid range
-            if (len(ranges_list[index_q-1]) == 0) and (len(ranges_list[index_q+1]) == 0):
-                # No lower range complement and no higher range complement:
-                excessTiles = excessTiles + list(q)
-                # Doesn't really matter what we do
-            elif (len(ranges_list[index_q-1]) == 0):
-                # Only no lower range complement
-                excessTiles.append(min(q))
-            elif (len(ranges_list[index_q+1]) == 0):
-                # No upper range complement --> discard largest tile
-                excessTiles.append(max(q))
-            else:
-                excessTiles = excessTiles + list(q)
+            continue
+        
+        # Mid range
+        mid_range_keeps = []
+        if (len(ranges_list[index_q-1]) == 0) and (len(ranges_list[index_q+1]) == 0):
+            # No lower range complement and no higher range complement:
+            excessTiles = excessTiles + list(q)
+            continue
+            # Doesn't really matter what we do
 
+        if (len(ranges_list[index_q+1]) != 0):
+            # High range complement exists
+            hr_complement = max(ranges_list[index_q+1])
+            
+            # find if the lr_complement has a friend up here
+            # If it has, we keep the smallest tile that is the friend --> i.e. discard others
+            q_filtered: list = list(filter(lambda x: x<=hr_complement-3, q))
+            if len(q_filtered):
+                keep_tile: int = max(q_filtered)
+                mid_range_keeps.append(keep_tile)
+                # add all the tiles to excessTiles except the keep_tile
+                excessTiles = excessTiles + list(set(q))
+            else:
+                # e.g. 567 --> we're kinda cooked, but we'd like to keep the larger ones ig
+                excessTiles.append(min(q))
+
+        if (len(ranges_list[index_q-1]) != 0):
+            # Lower range complement exists
+            # No upper range complement --> discard largest tile that doesn't hamper progress
+            lr_complement = min(ranges_list[index_q-1])
+            
+            # find if the lr_complement has a friend up here
+            # If it has, we keep the smallest tile that is the friend --> i.e. discard others
+            q_filtered: list = list(filter(lambda x: x>=lr_complement+3, q))
+            if len(q_filtered):
+                keep_tile: int = min(q_filtered)
+                mid_range_keeps.append(keep_tile)
+                # add all the tiles to excessTiles except the keep_tile
+                excessTiles = excessTiles + list(set(q))
+            else:
+                # e.g. 345 --> we're kinda cooked
+                excessTiles.append(max(q))
+
+    # After the for loop
+    excessTiles = list(set(excessTiles))
+    mid_range_keeps = list(set(mid_range_keeps))
+    if mid_range_keeps == excessTiles:
+        # If we get here, it is most likely due to situations like
+        # 2 4 5 7, where 2 sets exists, 2-5, 4-7
+        try:
+            # This code is here to prioritise 2-5/ 5-8 over things like 3-6/4-7
+            # The former allows 2 tiles, while the latter only allows for 1
+
+            for i in mid_range_keeps:
+                if i % 10 == 5:
+                    mid_range_keeps.remove(i)
+
+        except ValueError:
+            pass
+
+        return random.choice(mid_range_keeps)
+    excessTiles = listsXOR(excessTiles, mid_range_keeps)
     # Return random excess tile if it exist    
     if len(excessTiles):
-        return random.choice(excessTiles)        
+        if return_all:
+            return excessTiles
+        return random.choice(excessTiles)
+
     
     # If the program survivens until here, we have:
     # No triplets, no extra number tiles, and probably a bunch of lucky tiles
@@ -168,6 +225,8 @@ def buddha_findBestDiscard(inner_hand:list, knownPile: list):
     if len(excessTiles) == 0:
         print(inner_hand)
     # and we return a random excess pair
+    if return_all:
+            return excessTiles
     return random.choice(excessTiles)
 
 
@@ -181,3 +240,7 @@ if __name__ == '__main__':
     # buddha_suitCompleteness
     completenessTest = buddha_suitCompleteness([11 + i for i in range(9)])
     print(f'completenessTest = {completenessTest}')
+
+    hand = [12, 16, 19, 28, 23, 24, 25, 26, 27, 33, 36, 39, 45, 46, 47]
+
+    print(buddha_findBestDiscard(hand, [], return_all=True))

@@ -1,11 +1,13 @@
-from drawing_game import *
+from drawing_game import draw, playerdraw, askdiscard
 from liguStrats import findOptimalDiscardLigu
 from optimalDiscard import findOptimalDiscard, getRandomUselessTile
 from buddhastrats import buddha_findBestDiscard
 from hand_situation import hand_eval, hand_eval_adv
-from check_calling import *
-from usefulTiles import *
+from check_calling import check_calling_tiles, check_calling_tiles_bd, check_calling_tiles_ligu
+from usefulTiles import usefulness_ps
+from dynamic_playstyle import findOptimalDiscard_dynamic
 import sys
+
 sys.path.append('../mjcpy')
 
 from listUtils import find_occurence # type: ignore
@@ -27,7 +29,11 @@ class gambler:
         # Construct player profile (configure playstyle)
         # Below is the deault profile (as an example)
         self.profile = {
+<<<<<<< HEAD
             "skill": 1, # Must be an integer (for now)
+=======
+            "skill": 0, # Defined skillset with a string
+>>>>>>> bd021757faba91682694bdcbbbc6d350f4c13939
             
             # dictionary to represent {startingPairs: Max Starting Score to proceed}
             # Note that generally for high scoring hands it is better to go for the normal route --> Specify the max that the bot
@@ -58,7 +64,10 @@ class gambler:
             },
 
             # Default goal for hand
-            "goal": "normal"
+            "goal": "normal",
+
+            # Mode
+            "mode": 0
 
         }
 
@@ -108,19 +117,26 @@ class gambler:
 
         return
     
-    def evalhand(self) -> None:
+    def evalhand(self, tileDeck = []) -> None:
         # Differentiate the modes --> Save time if full_mode is not ran
-        if self.profile["skill"]:
-            self.hand_score, self.partial_sets, temp = hand_eval_adv(self.inner_hand, self.outer_hand)
+        # if self.profile["skill"]:
+        #     self.hand_score, self.partial_sets, temp = hand_eval_adv(self.inner_hand, self.outer_hand)
+        # else:
+            
+        
+        # Dynamic mode
+        if self.profile["skill"] == 'dynamic':
+            self.hand_score, self.partial_sets, temp = hand_eval_adv(self.inner_hand, self.outer_hand)      
+    
         else:
             self.hand_score, self.partial_sets, temp = hand_eval(self.inner_hand, self.outer_hand, priority='str')
-        
+
         # Update calling tiles:
         self.calling = []
-        if self.hand_score >= 7.5:
+        if self.hand_score >= 8.5:
             callers = check_calling_tiles(self.inner_hand, self.outer_hand, output_score=False)
             self.calling = list(callers.keys())
-
+    
         elif self.hand_score <= 0.5:
             # buddha
             callers = check_calling_tiles_bd(self.inner_hand, self.outer_hand, output_score=False)
@@ -130,6 +146,23 @@ class gambler:
         callers = check_calling_tiles_ligu(self.inner_hand, self.outer_hand, output_score=False)
         self.calling = self.calling + list(callers.keys())
 
+        if self.profile['skill'] != 'dynamic':
+            return
+        
+        
+        # Dynamics only
+
+        # print(f'Game Prog: {game_progession}')
+        if len(tileDeck) < 12:
+            self.profile['mode'] = 3
+        elif len(tileDeck) < 32:
+            self.profile['mode'] = 2
+        # elif len(tileDeck) < 48 and self.hand_score < 8.0:
+        #     self.profile['mode'] = 2
+        # elif len(tileDeck) < 62 and self.hand_score < 5.0:
+        #     self.profile['mode'] = 1
+        else:
+            self.profile['mode'] = 0
         return
 
     def determine_goal(self) -> None:
@@ -138,6 +171,10 @@ class gambler:
             return "Failed to determine starting goal: Did you initialise the draw?"
         elif self.hand_score == -1.0:
             return "Failed to determine starting goal: Did you evaluate your hand?\n call {object}.evalhand() before running this function"
+        
+        if self.profile["skill"] == 'dynamic':
+            # Dont change goal if skillset is dynamic
+            return
         
         # By default the goal is "normal" see self.profile dictionary default values
         if len(self.outer_hand) > 0:
@@ -187,12 +224,12 @@ class gambler:
         self.inner_hand.sort()
         return
     
-    def playturn(self, deck: list, discard:list, known_pile:list) -> list:
+    def playturn(self, deck: list, discard:list, known_pile:list, **kwargs) -> list:
         # Plays the turn of the player
         # Draws a tile from the deck first
         self.draw(deck)
 
-        if type(self.inner_hand[-1]) == str:
+        if type(self.inner_hand[-1]) is str:
             # Last tile of inner_hand is 'DRAW' (str) if the deck runs out of tiles
             # Exception occured with no tiles remaining
             return []
@@ -216,7 +253,15 @@ class gambler:
         # Model depends on the goal
         match self.profile["goal"]:
             case 'normal':
-                discardTile = findOptimalDiscard(self.inner_hand, known_pile + self.inner_hand, full_eval_mode=self.skill)
+                if self.profile["skill"] == "dynamic":
+                    try:
+                        CDF = kwargs["CDF_gamma"]
+                    except KeyError:
+                        CDF = []
+                    discardTile = findOptimalDiscard_dynamic(self.profile['mode'], self.inner_hand, self.outer_hand, 
+                                                     known_pile, discard, deck, CDF_gamma=CDF)
+                else:
+                    discardTile = findOptimalDiscard(self.inner_hand, known_pile + self.inner_hand, self.skill)
             case 'buddha':
                 discardTile = buddha_findBestDiscard(self.inner_hand, known_pile + self.inner_hand)
             case 'ligu':
@@ -229,12 +274,13 @@ class gambler:
 
 
         # Re-eval hand
-        self.evalhand()
+        self.evalhand(deck)
         # Return empty list if not won
         return []
+    
 
     
-    def up(self, partial:list[int], discard:list, known_pile:list) -> None:
+    def up(self, partial:list[int], discard:list, known_pile:list, deck=[], **kwargs) -> None:
         # Commiting up (chow) on the previous discard tile
         fullSet:list = partial + discard[-1:]
         fullSet.sort()
@@ -252,15 +298,34 @@ class gambler:
             self.inner_hand.remove(q)
 
         if self.playerID == 'me':
+            try:
+                CDF = kwargs['CDF_gamma']
+            except KeyError:
+                CDF = []
+            helper = findOptimalDiscard_dynamic(self.profile['mode'], self.inner_hand, self.outer_hand, 
+                                                known_pile, discard, deck, CDF_gamma=CDF)
+
+            print(f'Helper: {helper}')
             print(self)
-            discardTile = askdiscard(self.inner_hand)
+
+            discardTile = askdiscard(self.inner_hand)  # noqa: F405
+        elif self.profile['skill'] == 'dynamic':
+            try:
+                CDF = kwargs['CDF_gamma']
+            except KeyError:
+                CDF = []
+            
+            discardTile = findOptimalDiscard_dynamic(self.profile['mode'], self.inner_hand, self.outer_hand, 
+                                                     known_pile, discard, deck, CDF_gamma=CDF)
+
+            # discardTile = findOptimalDiscard_enhanced(self.inner_hand, self.outer_hand, known_pile, discard, deck, CDF_gamma=CDF)
         else:
             discardTile = findOptimalDiscard(self.inner_hand, known_pile + self.inner_hand, full_eval_mode=self.skill)
 
         self.disc(discardTile, discard, known_pile)
             
         # Re-eval hand
-        self.evalhand()
+        self.evalhand(deck)
 
         return
     
@@ -290,7 +355,7 @@ class gambler:
             ps.append([tile - 1, tile - 2])
 
         # Exit if up is not feasible
-        if up_feasible == False:
+        if up_feasible is False:
             return []
                
         
@@ -306,9 +371,9 @@ class gambler:
             
             nextDiscard = findOptimalDiscard(innerHandAfterUp, outerHandAfterUp, full_eval_mode=self.skill)
 
-            if type(nextDiscard) == str:
+            if type(nextDiscard) is str:
                 print(self)
-                print('Exception happened at line 296 @ determine_UP')
+                print('Exception happened at line 322 @ determine_UP')
                 quit()
 
             innerHandAfterUp.remove(nextDiscard)
@@ -362,7 +427,7 @@ class gambler:
         return output
           
     
-    def pong(self, pair:list, discard:list, known_pile:list) -> None:
+    def pong(self, pair:list, discard:list, known_pile:list, deck=[], **kwargs) -> None:
         # Commiting pong on the previous discard tile
         fullSet:list = pair + discard[-1:]
         fullSet.sort()
@@ -382,15 +447,34 @@ class gambler:
         
 
         if self.playerID == 'me':
+            try:
+                CDF:list = kwargs['CDF_gamma']
+            except KeyError:
+                CDF:list = []
+                
+            helper = findOptimalDiscard_dynamic(self.profile['mode'], self.inner_hand, self.outer_hand, 
+                                                     known_pile, discard, deck, CDF_gamma=CDF)
+
+            print(f'Helper: {helper}')
             print(self)
+            
             discardTile = askdiscard(self.inner_hand)
+
+        elif self.profile['skill'] == 'dynamic':
+            try:
+                CDF:list = kwargs['CDF_gamma']
+            except KeyError:
+                CDF:list = []
+            discardTile = findOptimalDiscard_dynamic(self.profile['mode'], self.inner_hand, self.outer_hand, 
+                                                     known_pile, discard, deck, CDF_gamma=CDF)
+        
         else:
             discardTile = findOptimalDiscard(self.inner_hand, known_pile + self.inner_hand, full_eval_mode=self.skill)
 
         self.disc(discardTile, discard, known_pile)
 
         # Re-eval hand
-        self.evalhand()
+        self.evalhand(deck)
 
         return
     
@@ -417,7 +501,7 @@ class gambler:
         # Finding the best discard tile
 
         nextDiscard = findOptimalDiscard(innerHandAfterPong, known_pile, full_eval_mode=self.skill)
-        if type(nextDiscard) == str:
+        if type(nextDiscard) is str:
             print(self)
             print('Exception happened at line 296 @ determine_pong')
             quit()
@@ -460,12 +544,20 @@ class gambler:
 if __name__ == '__main__':
     # Set up a test game
     # initialise the gamblers
+<<<<<<< HEAD
     me = gambler('a0__ME', {"skill": 1})
     deck = [25, 26, 27]
     pd = []
     disc =[]
     me.inner_hand = [25]
     me.outer_hand = [21, 22, 23, 17, 18, 19, 21, 21, 21, 31, 31, 31, 37, 38, 39]
+=======
+    me = gambler('me', 1)
+    deck = [41, 37]
+    discards = [35, 42, 42, 42, 42]
+    me.inner_hand = [11, 14, 17, 25, 28, 22, 36, 33, 39, 41, 41, 43, 44, 45, 46, 47]
+    me.outer_hand = []
+>>>>>>> bd021757faba91682694bdcbbbc6d350f4c13939
 
     me.evalhand()
     me.determine_goal()
