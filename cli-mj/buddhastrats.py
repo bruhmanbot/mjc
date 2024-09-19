@@ -136,6 +136,7 @@ def buddha_findBestDiscard(inner_hand:list, knownPile: list, return_all=False) -
     # Ranges list arranged as such:
     # [1-low, 1-mid, 1-high, 2-low, 2-mid, 2-high, 3-low, 3-mid, 3-high {sets}]
     # Find one set with 2 (or more) elements, and output the less "extreme" one
+    mid_range_keeps = []
     for index_q, q in enumerate(ranges_list):
         if len(q) <= 1:
             continue
@@ -151,7 +152,6 @@ def buddha_findBestDiscard(inner_hand:list, knownPile: list, return_all=False) -
             continue
         
         # Mid range
-        mid_range_keeps = []
         if (len(ranges_list[index_q-1]) == 0) and (len(ranges_list[index_q+1]) == 0):
             # No lower range complement and no higher range complement:
             excessTiles = excessTiles + list(q)
@@ -194,7 +194,7 @@ def buddha_findBestDiscard(inner_hand:list, knownPile: list, return_all=False) -
     # After the for loop
     excessTiles = list(set(excessTiles))
     mid_range_keeps = list(set(mid_range_keeps))
-    if mid_range_keeps == excessTiles:
+    if mid_range_keeps == excessTiles and len(mid_range_keeps) > 0:
         # If we get here, it is most likely due to situations like
         # 2 4 5 7, where 2 sets exists, 2-5, 4-7
         try:

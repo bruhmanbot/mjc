@@ -29,11 +29,7 @@ class gambler:
         # Construct player profile (configure playstyle)
         # Below is the deault profile (as an example)
         self.profile = {
-<<<<<<< HEAD
             "skill": 1, # Must be an integer (for now)
-=======
-            "skill": 0, # Defined skillset with a string
->>>>>>> bd021757faba91682694bdcbbbc6d350f4c13939
             
             # dictionary to represent {startingPairs: Max Starting Score to proceed}
             # Note that generally for high scoring hands it is better to go for the normal route --> Specify the max that the bot
@@ -544,20 +540,12 @@ class gambler:
 if __name__ == '__main__':
     # Set up a test game
     # initialise the gamblers
-<<<<<<< HEAD
     me = gambler('a0__ME', {"skill": 1})
     deck = [25, 26, 27]
     pd = []
     disc =[]
     me.inner_hand = [25]
     me.outer_hand = [21, 22, 23, 17, 18, 19, 21, 21, 21, 31, 31, 31, 37, 38, 39]
-=======
-    me = gambler('me', 1)
-    deck = [41, 37]
-    discards = [35, 42, 42, 42, 42]
-    me.inner_hand = [11, 14, 17, 25, 28, 22, 36, 33, 39, 41, 41, 43, 44, 45, 46, 47]
-    me.outer_hand = []
->>>>>>> bd021757faba91682694bdcbbbc6d350f4c13939
 
     me.evalhand()
     me.determine_goal()

@@ -89,8 +89,8 @@ def loss_probability(tile:int, known_pile:list[int], tileDeck:list[int], discard
     x = x+1 # Since that was how I modelled everything
 
     if t_p == 1:
-        A = 4.0
-        k = 1.5
+        A = 5.2
+        k = 1.85
     else:
         A = 1.2
         k = 0.9

@@ -30,7 +30,7 @@ def nextplayerindex(current_index: int):
 def spgame_loop(first_player: int = 0, printf=True):
     # gamers
     gamers = [0, 0, 0, 0]
-    gamers[0] = gambler('a0__ME')
+    gamers[0] = gambler('ai_0')
     gamers[1] = gambler('ai_1')
     gamers[2] = gambler('ai_2')
     gamers[3] = gambler('ai_3')
@@ -247,7 +247,7 @@ if __name__ == '__main__':
     #     winnerDict_str = db.read()
 
     # winnerDict: dict = ast.literal_eval(winnerDict_str)
-    games = 160000
+    games = 16000
     gd_args = [(i, False) for i in range(games)]
 
     poo = Pool(processes=6)
@@ -266,7 +266,7 @@ if __name__ == '__main__':
 
     print(gd_df.describe())
     print(f'time taken: {time.time() - start}')
-    gd_df.to_csv(r'C:/Users/Asus/Documents/coding projects/mj-tw-analysis/analysis_files/analysis_files_lib12/fullgame-160k-highlvl.csv')
+    gd_df.to_csv(r'C:/Users/Asus/Documents/coding projects/mj-tw-analysis/analysis_files/analysis_files_lib12/fullgame-16k-nlvl.csv')
     # for q in range(4000):
     #     winners: list = spgame_loop(q, printf=False)
 
