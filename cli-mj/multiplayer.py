@@ -19,6 +19,11 @@ def update_public_domain(*gamers: gambler) -> list:
 
     return new_domain
 
+def loadCDF() -> list:
+    gamma_dist_LUT = pd.read_csv('./script_data/gamma-dist.csv')
+    CDF = list(gamma_dist_LUT['CDF'])
+    
+    return CDF
 
 def nextplayerindex(current_index: int):
     if current_index == 3:
@@ -27,11 +32,12 @@ def nextplayerindex(current_index: int):
         return current_index + 1
 
 
-def spgame_loop(first_player: int = 0, printf=True):
+def spgame_loop(first_player: int = 0, printf=True, CDF_gamma=loadCDF()):
     # gamers
-    gamers = [0, 0, 0, 0]
+    gamers: list[gambler] = [0, 0, 0, 0] # Temporaily prime a list of len 4.
     gamers[0] = gambler('ai_0')
-    gamers[1] = gambler('ai_1')
+    # TODO: Set player profile to be dynamic for ai_1
+    gamers[1] = gambler('ai_1', player_profile={"skill": "dynamic", "weights": (1, 0)})
     gamers[2] = gambler('ai_2')
     gamers[3] = gambler('ai_3')
 
@@ -57,7 +63,7 @@ def spgame_loop(first_player: int = 0, printf=True):
         gamers[activePlayer].disc(playerDiscard, gameDiscards, publicDomain)
     else:
         # CPU Starting
-        gamers[activePlayer].playturn(tileDeck, gameDiscards, publicDomain)
+        gamers[activePlayer].playturn(tileDeck, gameDiscards, publicDomain, CDF_gamma=CDF_gamma)
 
     while True:
         lastTile = gameDiscards[-1]
@@ -71,8 +77,7 @@ def spgame_loop(first_player: int = 0, printf=True):
                 # Run the score count with the last tile
                 gResult = g.score_count(lastTile)
                 gResult = tuple([g.playerID, gamers[activePlayer].playerID] + [80 - len(tileDeck)] + gResult +
-                                [f'{g.inner_hand} || {g.outer_hand} || < {lastTile} >'] +
-                                [lastTile, publicDomain.count(lastTile)])
+                                [f'{g.inner_hand} || {g.outer_hand} || < {lastTile} >'])
                 winners.append(gResult)
 
         # Breaks the whole loop (and function if someone wins) // draw        
@@ -82,7 +87,7 @@ def spgame_loop(first_player: int = 0, printf=True):
 
         if len(tileDeck) == 0:
             # print('Game ended in draw')
-            return [tuple(['draw'] * 8)]
+            return [tuple(['draw'] * 6)]
 
         # Evaluate for pongs
         pongPlayerIndex = -1  # later will be changed to positive integer if someone pongs
@@ -110,7 +115,7 @@ def spgame_loop(first_player: int = 0, printf=True):
                     activePlayer = pongPlayerIndex  # == human index
                     # This will get player to pong and discard a tile
                     pairPong = [lastTile, lastTile]
-                    gamers[pongPlayerIndex].pong(pairPong, gameDiscards, publicDomain)
+                    gamers[pongPlayerIndex].pong(pairPong, gameDiscards, publicDomain, tileDeck, CDF_gamma=CDF_gamma)
                     continue
                 else:
                     # Continue the lower part
@@ -119,7 +124,7 @@ def spgame_loop(first_player: int = 0, printf=True):
 
                 # This will get player to pong and discard a tile
                 pairPong = [lastTile, lastTile]
-                gamers[pongPlayerIndex].pong(pairPong, gameDiscards, publicDomain)
+                gamers[pongPlayerIndex].pong(pairPong, gameDiscards, publicDomain, tileDeck, CDF_gamma=CDF_gamma)
                 if printf:
                     print(
                         f'{gamers[pongPlayerIndex].playerID} PONGED {lastTile} discarded by {gamers[activePlayer].playerID}')
@@ -138,7 +143,7 @@ def spgame_loop(first_player: int = 0, printf=True):
         if len(nextPlayerUpPS):
             if activePlayer != humanIndex:
                 # The up function will already ask the user for a discard if applicable
-                gamers[activePlayer].up(nextPlayerUpPS, gameDiscards, publicDomain)
+                gamers[activePlayer].up(nextPlayerUpPS, gameDiscards, publicDomain, tileDeck, CDF_gamma=CDF_gamma)
                 if printf:
                     print(f'{gamers[activePlayer].playerID} UPPED {lastTile} discarded by {gamers[activePlayer - 1].playerID}')
                     print(f'{gamers[activePlayer].playerID} displayed tiles: {gamers[activePlayer].outer_hand}')
@@ -151,9 +156,9 @@ def spgame_loop(first_player: int = 0, printf=True):
                 playerFreeChoice = input()
                 if bool(playerFreeChoice):
                     if playerFreeChoice == 'p':
-                        gamers[activePlayer].pong(nextPlayerPONG, gameDiscards, publicDomain)
+                        gamers[activePlayer].pong(nextPlayerPONG, gameDiscards, publicDomain, tileDeck, CDF_gamma=CDF_gamma)
                     else:
-                        gamers[activePlayer].up(nextPlayerUpPS, gameDiscards, publicDomain)
+                        gamers[activePlayer].up(nextPlayerUpPS, gameDiscards, publicDomain, tileDeck, CDF_gamma=CDF_gamma)
 
                     continue
                 else:
@@ -164,7 +169,7 @@ def spgame_loop(first_player: int = 0, printf=True):
 
                 playerFreeChoice = input()
                 if bool(playerFreeChoice):
-                    gamers[activePlayer].up(nextPlayerUpPS, gameDiscards, publicDomain)
+                    gamers[activePlayer].up(nextPlayerUpPS, gameDiscards, publicDomain, tileDeck, CDF_gamma=CDF_gamma)
                     continue
 
             ...
@@ -172,7 +177,7 @@ def spgame_loop(first_player: int = 0, printf=True):
         elif len(nextPlayerPONG):
             if activePlayer != humanIndex:
                 # The up function will already ask the user for a discard if applicable
-                gamers[activePlayer].pong(nextPlayerPONG, gameDiscards, publicDomain)
+                gamers[activePlayer].pong(nextPlayerPONG, gameDiscards, publicDomain, tileDeck, CDF_gamma=CDF_gamma)
                 if printf:
                     print(
                         f'{gamers[activePlayer].playerID} PONGED {lastTile} discarded by {gamers[activePlayer - 1].playerID}')
@@ -187,7 +192,7 @@ def spgame_loop(first_player: int = 0, printf=True):
             if bool(playerFreeChoice):
                 # This will get player to pong and discard a tile
                 pairPong = [lastTile, lastTile]
-                gamers[activePlayer].pong(pairPong, gameDiscards, publicDomain)
+                gamers[activePlayer].pong(pairPong, gameDiscards, publicDomain, tileDeck, CDF_gamma=CDF_gamma)
                 continue
             else:
                 # Continue the lower part
@@ -222,15 +227,14 @@ def spgame_loop(first_player: int = 0, printf=True):
                 potentialTile = tileDeck[-1 * count_fromEnd]
                 count_fromEnd = count_fromEnd + 1
 
-            winDialog: list = gamers[activePlayer].playturn(tileDeck, gameDiscards, publicDomain)
+            winDialog: list = gamers[activePlayer].playturn(tileDeck, gameDiscards, publicDomain, CDF_gamma=CDF_gamma)
             if len(winDialog):
                 # print(f'{w} from {gamers[activePlayer].playerID}')
                 # print(f'{gamers[activePlayer].inner_hand[:-1]} || {gamers[activePlayer].outer_hand} || < {gamers[activePlayer].inner_hand[-1]} >')
                 # Standardise the output
                 tsumoOutput: tuple = tuple(
                     [gamers[activePlayer].playerID, gamers[activePlayer].playerID, 80 - len(tileDeck)] + winDialog +
-                    [f'{gamers[activePlayer].inner_hand} || {gamers[activePlayer].outer_hand} || < {potentialTile} >']
-                    + [potentialTile] + [publicDomain.count(potentialTile)])
+                    [f'{gamers[activePlayer].inner_hand} || {gamers[activePlayer].outer_hand} || < {potentialTile} >'])
                 return [tsumoOutput]
             if printf:
                 print(f'{gamers[activePlayer].playerID} discarded {gameDiscards[-1]}')
@@ -239,7 +243,49 @@ def spgame_loop(first_player: int = 0, printf=True):
 
     # print (f'{len(tileDeck)} tiles left in the mountain')
 
+def game_end(gd_tuple: tuple) -> list[str]:
+    ## Displays how the game ended, either by tsumo or by discard
+    # Format for our output list, will be overwritten by the actual values later
+    outputList = ['tsumo/discard', 'winner_num_in_str', 'loser_num_in_str']
+    
+    if gd_tuple[0] == gd_tuple[1]:
+        # gd_tuple[0][-1:] is the number of the player
+        outputList = ['tsumo', gd_tuple[0], gd_tuple[0]]
+        return outputList
+    
+    # Else (Discard wins)
+    outputList = ['discard', gd_tuple[0], gd_tuple[1]]
+    return outputList
 
+def compileStats(Wins:dict, DiscardLosses:dict, Tsumos:dict) -> dict:
+    allPlayerStats = {}
+    
+    for player in Wins.keys():
+        totalWins = Wins[player] + Tsumos[player] * 3
+        totalLosses = DiscardLosses[player]
+        for q in Tsumos:
+            # Skip the tsumos made by the player or draws
+            if q == player or q == 'draw':
+                continue
+            
+            totalLosses += Tsumos[q]
+        
+        # Player stats: Wins, losses, W/L Ratio    
+        playerStats: tuple = (totalWins, totalLosses, totalWins/totalLosses)
+        
+        allPlayerStats[player] = playerStats
+    
+    # Sort our output dictionary and output it (Aesthetics!)    
+    playerList: list = list(allPlayerStats.keys())
+    playerList.sort()
+    
+    outputPlayerStats = {}
+    for player in playerList:
+        outputPlayerStats[player] = allPlayerStats[player]
+        
+    return outputPlayerStats
+        
+        
 if __name__ == '__main__':
     import time
     # import ast
@@ -247,8 +293,10 @@ if __name__ == '__main__':
     #     winnerDict_str = db.read()
 
     # winnerDict: dict = ast.literal_eval(winnerDict_str)
-    games = 16000
-    gd_args = [(i, False) for i in range(games)]
+    games = 12000
+    CDF = loadCDF()
+    gd_args = [(i, False, CDF) for i in range(games)]
+    outputToTerminal = True
 
     poo = Pool(processes=6)
 
@@ -260,14 +308,56 @@ if __name__ == '__main__':
     for row in gdData:
         for subtuple in row:
             gdData_fixed.append(subtuple)
-
-    df_col = ['Win', 'From', 'TilesUsed', 'Score', 'Accolades', 'Hand', 'wTile', 'count_WTile']
+    
+    if outputToTerminal:
+        # Terminal output we try to get the W/L Ratio for all AIs
+        # Calculate the amount of wins and losses and sumos
+        playerWins = {} # Logs the amount of times a player has won BY A DISCARD FROM OTHERS
+        playerLosses = {} # Logs player losses by discarding to others
+        playerTsumos = {} # Logs the amount of times a player has won by tsumo-ing
+        for win in gdData_fixed:
+            summary: list[str] = game_end(win)
+            
+            if summary[0] == 'tsumo':
+                try:
+                    playerTsumos[summary[1]] = playerTsumos[summary[1]] + 1
+                except KeyError:
+                    playerTsumos[summary[1]] = 1
+                    
+                continue
+            
+            # Discard wins
+            # Credit the winner
+            try:
+                playerWins[summary[1]] = playerWins[summary[1]] + 1
+            except KeyError:
+                playerWins[summary[1]] = 1
+                
+            # Log the loss for the loser
+            try:
+                playerLosses[summary[2]] = playerLosses[summary[2]] + 1
+            except KeyError:
+                playerLosses[summary[2]] = 1
+                
+        # Return the output        
+        compiled = compileStats(playerWins, playerLosses, playerTsumos)
+        print('Stats:')
+        for playerID in compiled:
+            print(f'{playerID}: {compiled[playerID]}')
+        
+        print('\n-----\n')
+        print(f'Wins: {playerWins} \nLosses: {playerLosses}\nTsumos: {playerTsumos}')
+        print(f'Prg executed sucessfully; Time used: {round(time.time()-start,2)}s')
+        quit()
+        
+    # Pandas-csv output
+    df_col = ['Win', 'From', 'TilesUsed', 'Score', 'Accolades', 'Hand']
     gd_df = pd.DataFrame(gdData_fixed, columns=df_col)
 
     print(gd_df.describe())
     print(f'time taken: {time.time() - start}')
-    gd_df.to_csv(r'C:/Users/Asus/Documents/coding projects/mj-tw-analysis/analysis_files/analysis_files_lib12/fullgame-16k-nlvl.csv')
-    # for q in range(4000):
+    
+    gd_df.to_csv(r'C:/Users/Asus/Documents/coding projects/mj-tw-analysis/analysis_files/analysis_files_lib12/dyn1.csv')
     #     winners: list = spgame_loop(q, printf=False)
 
     #     for i in winners:

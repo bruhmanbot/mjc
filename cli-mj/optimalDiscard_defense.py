@@ -46,14 +46,14 @@ def handValueAfterdiscard(inner_hand: list[int], outer_hand: list[int], discard:
     # callers: dict = check_calling_tiles(operation_hand, outer_hand)
     # if len(callers.keys()) > 0:
     #     # print('CALLING:', callers.keys())
-    #     calibrated_handScore = calibrated_handScore + 1
+    #     calibrated_handScore = calibrated_handScore + 2
     
     usefulTiles_partialSets: int = sum(partialsInfo.values())
 
     singlesInfo: dict = usefulness_ss(singles, knownPile=known_pile)
     usefulTiles_Singles: int = sum(singlesInfo.values())
 
-    handValue_weights = np.array([4, 0.2, 0.01])
+    handValue_weights = np.array([8, 0.4, 0.01])
     handValue_params = np.array([calibrated_handScore, usefulTiles_partialSets, usefulTiles_Singles])
 
     # print(discard, handValue_params)
@@ -61,7 +61,7 @@ def handValueAfterdiscard(inner_hand: list[int], outer_hand: list[int], discard:
     handValue:float = round(np.dot(handValue_weights, handValue_params),2)
     # print(discard, handValue_params)
 
-    return float(handValue)
+    return handValue
 
 def loss_probability(tile:int, known_pile:list[int], tileDeck:list[int], discards:list[int], gammaLUT:list[float]=[]) -> float:
     # loss probabilty = tile popularity * x occurences in public domain * game progression
@@ -74,7 +74,7 @@ def loss_probability(tile:int, known_pile:list[int], tileDeck:list[int], discard
         p_loss = 0
         return p_loss
     elif tile in discards[-12:]:
-        recency = 0.5 # Recency factor
+        recency = 0.6 # Recency factor
     else:
         recency = 1
     
@@ -85,14 +85,14 @@ def loss_probability(tile:int, known_pile:list[int], tileDeck:list[int], discard
     else:
         t_p = 3.5
 
-    x = discards.count(tile)
+    x = known_pile.count(tile)
     x = x+1 # Since that was how I modelled everything
 
     if t_p == 1:
         A = 5.2
         k = 1.85
     else:
-        A = 1.2
+        A = 1.56
         k = 0.9
 
     try:
@@ -102,18 +102,16 @@ def loss_probability(tile:int, known_pile:list[int], tileDeck:list[int], discard
         CDF = list(gamma_dist_LUT['CDF'])
         gamma_g = CDF[80-len(tileDeck)]
     
-    # Scaling constant m_j
-    m_j = 0.64
     # print(f'exp part: {A * np.exp(-1 * k * x)}')
     # print(f'{gamma_g} - Gamama')
 
-    p_loss = recency * m_j * t_p * A * np.exp(-1 * k * x) * (gamma_g)
+    p_loss = recency * t_p * A * np.exp(-1 * k * x) * (gamma_g)
 
 
     return p_loss
 
 def findOptimalDiscard_enhanced(inner_hand: list[int], outer_hand: list[int], known_pile: list[int], discards: list[int], 
-                                tileDeck: list[int], weights: tuple=(1, 1), goal='normal', **kwargs) -> int:
+                                tileDeck: list[int], weights: tuple=(1, -1), goal='normal', **kwargs) -> int:
     # Try to find top discard tile based on danger and speed (and potential gains)
     tilesToConsider = set(inner_hand)
     tileValueDB: dict = {}

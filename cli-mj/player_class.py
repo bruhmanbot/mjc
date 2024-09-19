@@ -1,6 +1,7 @@
 from drawing_game import draw, playerdraw, askdiscard
 from liguStrats import findOptimalDiscardLigu
 from optimalDiscard import findOptimalDiscard, getRandomUselessTile
+from optimalDiscard_defense import findOptimalDiscard_enhanced
 from buddhastrats import buddha_findBestDiscard
 from hand_situation import hand_eval, hand_eval_adv
 from check_calling import check_calling_tiles, check_calling_tiles_bd, check_calling_tiles_ligu
@@ -30,6 +31,8 @@ class gambler:
         # Below is the deault profile (as an example)
         self.profile = {
             "skill": 1, # Must be an integer (for now)
+            
+            "weights": (1, -1), # Weights for the dynamic playstyle
             
             # dictionary to represent {startingPairs: Max Starting Score to proceed}
             # Note that generally for high scoring hands it is better to go for the normal route --> Specify the max that the bot
@@ -87,7 +90,7 @@ class gambler:
         return f'Gambler ID: {self.playerID}, with hand:\n{self.inner_hand} || {self.outer_hand}'
 
 
-    def init_draw(self, deck:list, hand_len=16) -> list:
+    def init_draw(self, deck:list, hand_len=16):
         # original draw of 16 tiles
         self.inner_hand, out_deck = draw(1, hand_len, deck)
         result_hand = filter(lambda x: x > 10, self.inner_hand)
@@ -109,8 +112,6 @@ class gambler:
         # update the outer deck
         deck[:] = out_deck
 
-        
-
         return
     
     def evalhand(self, tileDeck = []) -> None:
@@ -125,7 +126,7 @@ class gambler:
             self.hand_score, self.partial_sets, temp = hand_eval_adv(self.inner_hand, self.outer_hand)      
     
         else:
-            self.hand_score, self.partial_sets, temp = hand_eval(self.inner_hand, self.outer_hand, priority='str')
+            self.hand_score, self.partial_sets, temp = hand_eval_adv(self.inner_hand, self.outer_hand)
 
         # Update calling tiles:
         self.calling = []
@@ -164,9 +165,11 @@ class gambler:
     def determine_goal(self) -> None:
         # Determines the goal for the player
         if len(self.inner_hand) == 0:
-            return "Failed to determine starting goal: Did you initialise the draw?"
+            print("Failed to determine starting goal: Did you initialise the draw?")
+            return
         elif self.hand_score == -1.0:
-            return "Failed to determine starting goal: Did you evaluate your hand?\n call {object}.evalhand() before running this function"
+            print("Failed to determine starting goal: Did you evaluate your hand?\n call {object}.evalhand() before running this function")
+            return 
         
         if self.profile["skill"] == 'dynamic':
             # Dont change goal if skillset is dynamic
@@ -254,8 +257,14 @@ class gambler:
                         CDF = kwargs["CDF_gamma"]
                     except KeyError:
                         CDF = []
-                    discardTile = findOptimalDiscard_dynamic(self.profile['mode'], self.inner_hand, self.outer_hand, 
-                                                     known_pile, discard, deck, CDF_gamma=CDF)
+                        
+                    # Dynamic modes 1,2,3
+                    # discardTile = findOptimalDiscard_dynamic(self.profile['mode'], self.inner_hand, self.outer_hand, 
+                    #                                  known_pile, discard, deck, CDF_gamma=CDF)
+                    
+                    # Dot product mode algorithm
+                    discardTile = findOptimalDiscard_enhanced(self.inner_hand, self.outer_hand, known_pile, 
+                                                              discard, deck, self.profile["weights"], CDF_gamma=CDF)
                 else:
                     discardTile = findOptimalDiscard(self.inner_hand, known_pile + self.inner_hand, self.skill)
             case 'buddha':
@@ -311,10 +320,13 @@ class gambler:
             except KeyError:
                 CDF = []
             
-            discardTile = findOptimalDiscard_dynamic(self.profile['mode'], self.inner_hand, self.outer_hand, 
-                                                     known_pile, discard, deck, CDF_gamma=CDF)
+            # Using the step modes 1,2,3, of optimalDiscard_dynamic
+            # discardTile = findOptimalDiscard_dynamic(self.profile['mode'], self.inner_hand, self.outer_hand, 
+            #                                          known_pile, discard, deck, CDF_gamma=CDF)
 
-            # discardTile = findOptimalDiscard_enhanced(self.inner_hand, self.outer_hand, known_pile, discard, deck, CDF_gamma=CDF)
+            # Dot product algortihm from findOptimalDiscard_enhanced
+            discardTile = findOptimalDiscard_enhanced(self.inner_hand, self.outer_hand, known_pile, 
+                                                      discard, deck, self.profile['weights'], CDF_gamma=CDF)
         else:
             discardTile = findOptimalDiscard(self.inner_hand, known_pile + self.inner_hand, full_eval_mode=self.skill)
 
@@ -461,8 +473,14 @@ class gambler:
                 CDF:list = kwargs['CDF_gamma']
             except KeyError:
                 CDF:list = []
-            discardTile = findOptimalDiscard_dynamic(self.profile['mode'], self.inner_hand, self.outer_hand, 
-                                                     known_pile, discard, deck, CDF_gamma=CDF)
+                
+            # Dynamic modes 1,2,3 algorithm
+            # discardTile = findOptimalDiscard_dynamic(self.profile['mode'], self.inner_hand, self.outer_hand, 
+            #                                          known_pile, discard, deck, CDF_gamma=CDF)
+            
+            # Dot product algorithm
+            discardTile = findOptimalDiscard_enhanced(self.inner_hand, self.outer_hand, known_pile, 
+                                                      discard, deck, self.profile["weights"], CDF_gamma=CDF)
         
         else:
             discardTile = findOptimalDiscard(self.inner_hand, known_pile + self.inner_hand, full_eval_mode=self.skill)

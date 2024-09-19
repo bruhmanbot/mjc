@@ -1,3 +1,5 @@
+"""This is depreciated code -- Replaced with optimalDiscard_Defense.py"""
+
 import numpy as np
 from usefulTiles import *
 from hand_situation import hand_eval_adv
