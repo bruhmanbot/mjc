@@ -19,11 +19,13 @@ def update_public_domain(*gamers: gambler) -> list:
 
     return new_domain
 
-def loadCDF() -> list:
+
+def loadCDF() -> tuple:
     gamma_dist_LUT = pd.read_csv('./script_data/gamma-dist.csv')
-    CDF = list(gamma_dist_LUT['CDF'])
-    
+    CDF = tuple(gamma_dist_LUT['CDF'])
+
     return CDF
+
 
 def nextplayerindex(current_index: int):
     if current_index == 3:
@@ -34,10 +36,10 @@ def nextplayerindex(current_index: int):
 
 def spgame_loop(first_player: int = 0, printf=True, CDF_gamma=loadCDF()):
     # gamers
-    gamers: list[gambler] = [0, 0, 0, 0] # Temporaily prime a list of len 4.
+    gamers: list[gambler] = [0, 0, 0, 0]  # Temporaily prime a list of len 4.
     gamers[0] = gambler('ai_0')
-    # TODO: Set player profile to be dynamic for ai_1
-    gamers[1] = gambler('ai_1', player_profile={"skill": "dynamic", "weights": (1, 0)})
+    # Set player profile to be dynamic for ai_1
+    gamers[1] = gambler('ai_1', player_profile={"skill": "dynamic", "weights": (1, -0.28)})
     gamers[2] = gambler('ai_2')
     gamers[3] = gambler('ai_3')
 
@@ -145,7 +147,8 @@ def spgame_loop(first_player: int = 0, printf=True, CDF_gamma=loadCDF()):
                 # The up function will already ask the user for a discard if applicable
                 gamers[activePlayer].up(nextPlayerUpPS, gameDiscards, publicDomain, tileDeck, CDF_gamma=CDF_gamma)
                 if printf:
-                    print(f'{gamers[activePlayer].playerID} UPPED {lastTile} discarded by {gamers[activePlayer - 1].playerID}')
+                    print(
+                        f'{gamers[activePlayer].playerID} UPPED {lastTile} discarded by {gamers[activePlayer - 1].playerID}')
                     print(f'{gamers[activePlayer].playerID} displayed tiles: {gamers[activePlayer].outer_hand}')
                     print(f'{gamers[activePlayer].playerID} discarded {gameDiscards[-1]}')
                 continue
@@ -156,9 +159,11 @@ def spgame_loop(first_player: int = 0, printf=True, CDF_gamma=loadCDF()):
                 playerFreeChoice = input()
                 if bool(playerFreeChoice):
                     if playerFreeChoice == 'p':
-                        gamers[activePlayer].pong(nextPlayerPONG, gameDiscards, publicDomain, tileDeck, CDF_gamma=CDF_gamma)
+                        gamers[activePlayer].pong(nextPlayerPONG, gameDiscards, publicDomain, tileDeck,
+                                                  CDF_gamma=CDF_gamma)
                     else:
-                        gamers[activePlayer].up(nextPlayerUpPS, gameDiscards, publicDomain, tileDeck, CDF_gamma=CDF_gamma)
+                        gamers[activePlayer].up(nextPlayerUpPS, gameDiscards, publicDomain, tileDeck,
+                                                CDF_gamma=CDF_gamma)
 
                     continue
                 else:
@@ -243,23 +248,25 @@ def spgame_loop(first_player: int = 0, printf=True, CDF_gamma=loadCDF()):
 
     # print (f'{len(tileDeck)} tiles left in the mountain')
 
+
 def game_end(gd_tuple: tuple) -> list[str]:
     ## Displays how the game ended, either by tsumo or by discard
     # Format for our output list, will be overwritten by the actual values later
     outputList = ['tsumo/discard', 'winner_num_in_str', 'loser_num_in_str']
-    
+
     if gd_tuple[0] == gd_tuple[1]:
         # gd_tuple[0][-1:] is the number of the player
         outputList = ['tsumo', gd_tuple[0], gd_tuple[0]]
         return outputList
-    
+
     # Else (Discard wins)
     outputList = ['discard', gd_tuple[0], gd_tuple[1]]
     return outputList
 
-def compileStats(Wins:dict, DiscardLosses:dict, Tsumos:dict) -> dict:
+
+def compileStats(Wins: dict, DiscardLosses: dict, Tsumos: dict) -> dict[str, tuple]:
     allPlayerStats = {}
-    
+
     for player in Wins.keys():
         totalWins = Wins[player] + Tsumos[player] * 3
         totalLosses = DiscardLosses[player]
@@ -267,33 +274,34 @@ def compileStats(Wins:dict, DiscardLosses:dict, Tsumos:dict) -> dict:
             # Skip the tsumos made by the player or draws
             if q == player or q == 'draw':
                 continue
-            
+
             totalLosses += Tsumos[q]
-        
-        # Player stats: Wins, losses, W/L Ratio    
-        playerStats: tuple = (totalWins, totalLosses, totalWins/totalLosses)
-        
+
+        # Player stats: Wins, losses, W/L Ratio
+        try:
+            playerStats: tuple = (totalWins, totalLosses, totalWins / totalLosses)
+        except ZeroDivisionError:
+            playerStats: tuple = (totalWins, totalLosses, totalWins)
+
         allPlayerStats[player] = playerStats
-    
+
     # Sort our output dictionary and output it (Aesthetics!)    
-    playerList: list = list(allPlayerStats.keys())
+    playerList: list[str] = list(allPlayerStats.keys())
     playerList.sort()
-    
+
     outputPlayerStats = {}
     for player in playerList:
         outputPlayerStats[player] = allPlayerStats[player]
-        
+
     return outputPlayerStats
-        
-        
+
+
 if __name__ == '__main__':
     import time
-    # import ast
-    # with open('winDict.txt') as db:
-    #     winnerDict_str = db.read()
+
 
     # winnerDict: dict = ast.literal_eval(winnerDict_str)
-    games = 12000
+    games = 6000
     CDF = loadCDF()
     gd_args = [(i, False, CDF) for i in range(games)]
     outputToTerminal = True
@@ -308,70 +316,53 @@ if __name__ == '__main__':
     for row in gdData:
         for subtuple in row:
             gdData_fixed.append(subtuple)
-    
+
     if outputToTerminal:
         # Terminal output we try to get the W/L Ratio for all AIs
         # Calculate the amount of wins and losses and sumos
-        playerWins = {} # Logs the amount of times a player has won BY A DISCARD FROM OTHERS
-        playerLosses = {} # Logs player losses by discarding to others
-        playerTsumos = {} # Logs the amount of times a player has won by tsumo-ing
+        playerWins = {}  # Logs the amount of times a player has won BY A DISCARD FROM OTHERS
+        playerLosses = {}  # Logs player losses by discarding to others
+        playerTsumos = {}  # Logs the amount of times a player has won by tsumo-ing
         for win in gdData_fixed:
             summary: list[str] = game_end(win)
-            
+
             if summary[0] == 'tsumo':
                 try:
                     playerTsumos[summary[1]] = playerTsumos[summary[1]] + 1
                 except KeyError:
                     playerTsumos[summary[1]] = 1
-                    
+
                 continue
-            
+
             # Discard wins
             # Credit the winner
             try:
                 playerWins[summary[1]] = playerWins[summary[1]] + 1
             except KeyError:
                 playerWins[summary[1]] = 1
-                
+
             # Log the loss for the loser
             try:
                 playerLosses[summary[2]] = playerLosses[summary[2]] + 1
             except KeyError:
                 playerLosses[summary[2]] = 1
-                
+
         # Return the output        
         compiled = compileStats(playerWins, playerLosses, playerTsumos)
         print('Stats:')
         for playerID in compiled:
             print(f'{playerID}: {compiled[playerID]}')
-        
+
         print('\n-----\n')
         print(f'Wins: {playerWins} \nLosses: {playerLosses}\nTsumos: {playerTsumos}')
-        print(f'Prg executed sucessfully; Time used: {round(time.time()-start,2)}s')
+        print(f'Prg executed sucessfully; Time used: {round(time.time() - start, 2)}s')
         quit()
-        
+
     # Pandas-csv output
     df_col = ['Win', 'From', 'TilesUsed', 'Score', 'Accolades', 'Hand']
     gd_df = pd.DataFrame(gdData_fixed, columns=df_col)
 
     print(gd_df.describe())
     print(f'time taken: {time.time() - start}')
-    
+
     gd_df.to_csv(r'C:/Users/Asus/Documents/coding projects/mj-tw-analysis/analysis_files/analysis_files_lib12/dyn1.csv')
-    #     winners: list = spgame_loop(q, printf=False)
-
-    #     for i in winners:
-    #         try:
-    #             winnerDict[i] += 1
-    #         # Build new profile if not present originally
-    #         except KeyError:
-    #             winnerDict[i] = 1
-
-    #     if q % 500 == 0:
-    #         print(f'On iteration {q}')
-
-    # rewrite = open('winDict.txt', "w")
-
-    # rewrite.write(str(winnerDict))
-
-    # rewrite.close()

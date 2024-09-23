@@ -152,11 +152,6 @@ def spgame_loop(first_player:int=0, printf=True, **kwargs):
 
 
 if __name__ == '__main__':
-    # import ast
-    # with open('winDict.txt') as db:
-    #     winnerDict_str = db.read()
-    
-    # winnerDict: dict = ast.literal_eval(winnerDict_str)
     multiCore = True
 
     gamma_dist_LUT = pd.read_csv('./script_data/gamma-dist.csv')
@@ -188,11 +183,4 @@ if __name__ == '__main__':
             winners_diag: tuple = spgame_loop(q, printf=False, CDF_gamma=CDF)
 
             print (winners_diag)        
-            
 
-    # rewrite = open('winDict.txt', "w")
-
-    # rewrite.write(str(winnerDict))
-
-    # rewrite.close()
-    
