@@ -77,9 +77,15 @@ def askdiscard(playerHand: list) -> int:
     m = input('Discard tile?')
 
     while True:
+        # Check for empty string
+        if m == '':
+            m = input('again?')
+            continue
+        
+        # Check for invalid inputs
         try:
             int(m)
-        except NameError or ValueError:
+        except ValueError:
             m = input('again?')
             continue
         # Breaks when m is valid

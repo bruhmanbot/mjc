@@ -415,7 +415,7 @@ class gambler:
             # ps: tuple
             if max(ps) == min(ps) + 1:
             # open end // edge straight
-                if min(ps) in [1,8]:
+                if (min(ps) % 10) in [1,8]:
                     # Add to edge staights
                     best_ps_f[3].append(ps)
                 else:
