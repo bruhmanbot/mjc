@@ -216,7 +216,12 @@ def spgame_loop(first_player:int=0, printf=True):
                 print(f'Win by sumo from {gamers[humanIndex].playerID}')
                 print(f'{gamers[humanIndex].inner_hand[:-1]} || {gamers[humanIndex].outer_hand} || < {gamers[humanIndex].inner_hand[-1]} >')
 
-                tsumoOutput: tuple = tuple([gamers[humanIndex].playerID, gamers[humanIndex].playerID, 80-len(tileDeck)] + ['win!'] + 
+                # Score counting:
+                winningTile = gamers[humanIndex].inner_hand[-1]
+                gamers[humanIndex].inner_hand.pop(-1)
+                winDialog = gamers[humanIndex].score_count(winningTile, self_drawn=1)
+
+                tsumoOutput: tuple = tuple([gamers[humanIndex].playerID, gamers[humanIndex].playerID, 80-len(tileDeck)] + winDialog + 
                                            [f'{gamers[humanIndex].inner_hand[:-1]} || {gamers[humanIndex].outer_hand} || < {potentialTile} >'])
                 print(gamers[0])
 

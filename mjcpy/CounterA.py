@@ -240,11 +240,13 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
                 add_accolade(17)
                 dudu = 1
                 break
-        else:
-            if WinningTile[0] == i[1] and WinningTile[0] != i[0]:  # Winning tile is filling the hole
-                add_accolade(18)
-                dudu = 1
-                break
+
+        if WinningTile[0] == i[1] and WinningTile[0] != i[0]:  # Winning tile is filling the hole
+            add_accolade(18)
+            dudu = 1
+            break
+
+
         if abs(WinningTile[0] - EyePair[0]) in [3, 0] and same_set(WinningTile[0],
                                                                    EyePair[0]):  # Call 69 (from 6678) gets 9
             if abs(EyePair[0] - i[1]) == 2:  # 3345 -- 3/6
@@ -836,8 +838,8 @@ def std_hand_score_count(InnerStraights: list, OuterStraights: list, InnerTriple
 
 # Testing
 if __name__ == "__main__":
-    ace = std_hand_score_count([], [],
-                               [11, 11, 11, 19, 19, 19, 44, 44, 44, 41, 41, 41], [42, 42, 42], [45, 45], [44], 1,
+    ace = std_hand_score_count([16, 17, 18, 26, 27, 28, 34, 35, 36], [17, 18, 19],
+                               [], [ 14, 14, 14], [33, 33], [27], 1,
                                2, 3, [])
 
     print(ace[4], ace[3])
