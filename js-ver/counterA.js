@@ -223,16 +223,19 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
                     matrix_row = Math.floor(kan[0] / 10) -1 // selecting row based on suit
                     matrix_col = 0; // first col
                     mod = 1;
+                    
                     break;
                 case 4: //456
                     matrix_row = Math.floor(kan[0] / 10) -1 // selecting row based on suit
                     matrix_col = 1; // 2nd col
                     mod = 1;
+                    
                     break;
                 case 7: //789
                     matrix_row = Math.floor(kan[0] / 10) -1 // selecting row based on suit
                     matrix_col = 2; // 3rd col
                     mod = 1;
+                    
                     break;
                     
                 default:
@@ -243,13 +246,15 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
             dragon_matrix[matrix_row][matrix_col] ++
         }
 
+        console.info('Dragon_Matrix = ', dragon_matrix)
         
-
         let suit;
         
         for (suit of dragon_matrix){
             // considering PURE dragons! / small old
-            const suit_sorted = suit.splice().sort();
+            const suit_sorted = suit.toSorted(lu.sort_asc);
+            console.info('Looking at suit = ', suit)
+            console.info('Looking at suit_sorted = ', suit_sorted)
             if (suit_sorted[0] > 0) {
                 // at least 1 dragon
                 if (suit_sorted.toString() == [1, 2, 2].toString()){

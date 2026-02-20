@@ -233,3 +233,20 @@ export function matrix_diag(matrix) {
 
     return sum_diag
 }
+
+
+export function sort_asc(a, b){
+    // Sorting (comparing function) for ascending sort (numbers)
+    if (a-b > 0) {
+        return true
+    }
+    return false
+}
+
+export function sort_desc(a, b){
+    // Sorting (comparing function) for ascending sort (numbers)
+    if (a-b < 0) {
+        return true
+    }
+    return false
+}
