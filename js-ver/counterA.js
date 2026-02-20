@@ -253,8 +253,6 @@ export async function score_count_A(innerStraights, innerTriplets, outerStraight
         for (suit of dragon_matrix){
             // considering PURE dragons! / small old
             const suit_sorted = suit.toSorted(lu.sort_asc);
-            console.info('Looking at suit = ', suit)
-            console.info('Looking at suit_sorted = ', suit_sorted)
             if (suit_sorted[0] > 0) {
                 // at least 1 dragon
                 if (suit_sorted.toString() == [1, 2, 2].toString()){
